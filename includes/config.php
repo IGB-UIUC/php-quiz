@@ -7,7 +7,7 @@
 @define ('DB_NAME','training');
 
 //LDAP Settings
-@define ('LDAP_HOST','authen.igb.uiuc.edu');
+@define ('LDAP_HOST','XXX.XXX.XXX.XXX');
 @define ('LDAP_PEOPLE_DN', 'ou=people,dc=XXX,dc=XXX,dc=XXX');
 @define ('LDAP_GROUP_DN', 'ou=group,dc=XXX,dc=XXX,dc=XXX');
 @define ('LDAP_SSL','0');
