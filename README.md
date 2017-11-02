@@ -1,6 +1,6 @@
 A simple PHP/MySQL/LDAP Quiz
 
-INSTALL:
+#INSTALL:
 * Copy contents of folder to webserver
 * import the .sql database and edit includes/config.php file
 * Make sure LDAP is working correctly with php-ldap
