@@ -2,17 +2,24 @@
 
 <br />
 <?php
+/**
+ * includes/login.php
+ * Show a login prompt
+ */
 if($authenticate->getLogonError())
 {
     echo "<div class=\"alert alert-danger\" role=\"alert\">";
     echo "<b>".$authenticate->getLogonError()."</b> <br>Please try again please.";
     echo "</div>";
 }
-//Build GET url
+//Build GET url so when we submit the login form we will go to the original destination
 $getUrl = "";
 foreach($_GET as $name => $value)
 {
-    $getUrl .= $name."=".$value."&";
+    if($name!='logout')
+    {
+    	$getUrl .= $name."=".$value."&";
+    }
 }
 
 ?>

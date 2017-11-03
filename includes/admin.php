@@ -1,3 +1,9 @@
+<?php
+/**
+ * includes/admin.php
+ * List administration options
+ */
+?>
 <div class="panel panel-primary">
 <div class="panel-heading"><h3>Admin Options</h3></div>
 <div class="panel-body">

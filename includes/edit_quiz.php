@@ -48,16 +48,18 @@ if(isset($_POST['auto_order']))
     }
 }
 
+//Delete a question or activate a question give the question option the user clicked
 if(isset($_GET['action']) && isset($_GET['question_id']))
 {
     $questionToModify= new Question($sqlDataBase);
     $questionToModify->LoadQuestion($_GET['question_id']);
+    //Delte question
     if($_GET['action']=="del")
     {
         $questionToModify->setQuestionStatus(Question::DELETED);
 
     }
-
+    //Reactivate the question after it was deleted
     if($_GET['action']=="act")
     {
         $questionToModify->setQuestionStatus(Question::ACTIVE);
@@ -81,6 +83,7 @@ echo "<input type=\"submit\" value=\"Add Question\" name=\"add_question\" style=
 //echo "<input type=\"submit\" value=\"Auto Order\" name=\"auto_order\" style=\"background-color:#dbeaf5;\">";
 echo "</form>";
 
+//List all questions for this quiz, list two tables one for active questions and one for deleted ones
 foreach($questionStatusArr as $statusId => $statusDescription)
 {
     $questionsList = $quiz->ListQuestions($statusId);

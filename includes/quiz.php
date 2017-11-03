@@ -1,4 +1,8 @@
 <?php
+/**
+ * includes/quiz.php
+ * Star the quiz
+ */
 $quiz = new Quiz($sqlDataBase);
 $quizResults = new QuizResults($sqlDataBase);
 
@@ -70,7 +74,7 @@ if($quizResults->getStatus() == QuizResults::PASSED)
             <input type=\"hidden\" name=\"user_id\" value=\"".$authenticate->getAuthenticatedUser()->getUserId()."\">
             <input type=\"hidden\" name=\"key\" value=\"".$authenticate->getAuthenticatedUser()->getAuthKey()."\">
             <input type=\"hidden\" name=\"quiz_results_id\" value=\"".$quizResults->getQuizResultsId()."\">
-            <br><br></div>";
+            <br><br>";
     echo "</form>";
     echo "</div>";
 
@@ -89,9 +93,10 @@ $nextQuestion = $question->GetNextQuestion();
 echo "<div class=\"panel panel-primary\">";
 echo "<div class=\"panel-heading\"><h3>".$quiz->getQuizName()."</h3></div>";
 echo "<div class=\"panel-body\">";
-
-
-
+echo "<div class=\"alert alert-info\"><h4>Instructions:</h4>
+      Please click on the checkbox next to your answer and click on the Select Answer button.
+      <br>As questions are answered, question numbers on progress bar will turn blue.
+      <br>When all questions are answered a Grade Quiz button will appear, click on this button to view your results and print your certificate.</div><br>";
 echo "<br><b>Progress:</b>";
 echo "<div class=\"btn-toolbar\" role=\"toolbar\" style=\"margin: 0;\">";
 echo "<div class=\"btn-group btn-group-sm\">";
@@ -160,7 +165,7 @@ foreach($answersList as $id=>$answerInfo)
     {
         echo  " checked=\"checked\"";
     }
-    echo ">  ".$answerInfo['answer_text']." ".$answerInfo['correct_answer']."</td></tr>";
+    echo ">  ".$answerInfo['answer_text']." </td></tr>";
 }
 echo "</table>";
 

@@ -11,6 +11,7 @@ class User {
 
     const ROLE_USER=0;
     const ROLE_ADMIN=1;
+    const ROLE_MODERATOR=2;
     private $userName;
     private $userRole;
 
@@ -72,7 +73,7 @@ class User {
      */
     public function ListUsers($userRole)
     {
-        $queryUsersList = "SELECT * FROM users WHERE user_role=:user_role";
+        $queryUsersList = "SELECT * FROM users WHERE user_role=:user_role ORDER BY user_name";
         $usersList = $this->sqlDataBase->prepare($queryUsersList);
         $usersList->execute(array(':user_role'=>$userRole));
         return $usersList->fetchAll(PDO::FETCH_ASSOC);

@@ -4,6 +4,9 @@
  * User: nevoband
  * Date: 7/28/14
  * Time: 2:01 PM
+ * includes/user_results_questions.php
+ * List all user's quizzes results
+ * show pass fail and % for each quiz results
  */
 
 $question = new Question($sqlDataBase);
@@ -16,7 +19,6 @@ if(isset($_GET['quiz_results']))
     echo "<div class=\"panel panel-info\">";
     echo "<div class=\"panel-heading\"><h3>Quiz Results:</h3></div>";
     echo "<div class=\"panel-body\">";
-
     $quizResults->LoadQuizResults($_GET['quiz_results']);
     $questionResultsList = $quizResults->QuestionResultsList();
 

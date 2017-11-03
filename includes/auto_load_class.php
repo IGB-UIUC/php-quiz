@@ -1,5 +1,7 @@
 <?php
-
+/**Auto load classes
+ * @param $class_name
+ */
 function class_autoload($class_name) {
     if(file_exists('classes/' . $class_name . '.php'))
     {

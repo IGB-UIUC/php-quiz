@@ -1,4 +1,8 @@
-<?php 
+<?php
+/**
+ * includes/quiz_list_admin.php
+ * list quizzes available to modify
+ */
 $quiz = new Quiz($sqlDataBase);
 
 if(isset($_POST['add_quiz']))
@@ -25,6 +29,7 @@ if(isset($_GET['quiz_action']))
 <div class="panel panel-primary">
 <div class="panel-heading"><h3>Quizzes List:</h3></div>
 <div class="panel-body">
+<a href="index.php?p=admin"><< Back</a><br><br>
 <form action="index.php?p=quizzes" method="post">
     <h3>Quiz Name:</h3>
     <textarea name="quiz_name" rows="3" cols="50"></textarea><br><br>

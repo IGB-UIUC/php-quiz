@@ -1,4 +1,8 @@
 <?php
+/**
+ * includes/quiz_list.php
+ * List available quizzes
+ */
 $quiz = new Quiz($sqlDataBase);
 $quizResults = new QuizResults($sqlDataBase);
 

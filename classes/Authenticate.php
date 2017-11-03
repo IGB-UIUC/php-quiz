@@ -56,7 +56,7 @@ class Authenticate {
                 return true;
             }
         } else {
-            $this->logonError = $this->logonerror . "Incorrect user name or password.";
+            $this->logonError = $this->logonError . "Incorrect user name or password.";
         }
 
         $this->verified=false;

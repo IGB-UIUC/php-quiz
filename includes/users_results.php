@@ -1,4 +1,14 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: nevoband
+ * Date: 7/28/14
+ * Time: 2:01 PM
+ * includes/usesr_results.php
+ * List all user's quizzes results
+ * show pass fail and % for each quiz results
+ */
+
 $userToEdit = new User($sqlDataBase);
 $quiz = new Quiz($sqlDataBase);
 $quizResults = new QuizResults($sqlDataBase);
@@ -16,6 +26,7 @@ $quizList = $quiz->ListAllQuizzes();
 echo "<div class=\"panel panel-primary\">";
 echo "<div class=\"panel-heading\"><h3>User Quiz Results</h3></div>";
 echo "<div class=\"panel-body\">";
+echo "<a href=\"index.php?p=admin\"><< Back</a><br><br>";
 //Form starts
 echo "<form action=\"index.php?p=users_results\" method=\"get\">";
 
@@ -34,6 +45,7 @@ echo "</table>";
 echo "<div class=\"panel panel-info\">";
 echo "<div class=\"panel-heading\"><h3>Results</h3></div>";
 echo "<div class=\"panel-body\">";
+
 if($quizResultsList)
 {
     echo "<table class=\"table\">";
@@ -55,7 +67,7 @@ if($quizResultsList)
 
         echo "<td>".$quizResultsInfo['user_name']."</td>
                 <td>".$quizResults->getStatusText($quizResultsInfo['status'])."</td>
-                <td><a href=\"index.php?p=user_results_questions&quiz_results=".$quizResultsInfo['quiz_results_id']."\">". ( ($quizResultsInfo['status']==QuizResults::PASSED || $quizResultsInfo['status']==QuizResults::FAILED)?round((($quizResultsInfo['correct_points'] / $quizResultsInfo['total_points'] )* 100),2)."%":"n/a" )."</a></td>
+                <td><a href=\"index.php?p=user_results_questions&quiz_results=".$quizResultsInfo['quiz_results_id']."\">". ( (($quizResultsInfo['status']==QuizResults::PASSED || $quizResultsInfo['status']==QuizResults::FAILED) && $quizResultsInfo['total_points']>0)?round((($quizResultsInfo['correct_points'] / $quizResultsInfo['total_points'] )* 100),2)."%":"n/a" )."</a></td>
                 <td>".( ($quizResultsInfo['status']==QuizResults::PASSED)?date('m-d-Y',strtotime($quizResultsInfo['complete_date'])):"" ) ."</td>
                 </tr>";
     }

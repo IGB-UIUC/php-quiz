@@ -1,20 +1,4 @@
 <?php
-/*
-This file is part of php-quiz.
-
-    php-quiz is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    php-quiz is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with php-quiz.  If not, see <http://www.gnu.org/licenses/>.
-*/
 ob_start();
 session_start();
 error_reporting(-1);
@@ -59,17 +43,25 @@ if($isAuthenticated)
     if(isset($_GET['logout']))
     {
         $authenticate->Logout();
+	$isAuthenticated = false;
+	echo "logged out";
     }
     else
     {
-        echo "<a href=\"index.php?logout=true\">Logout</a><br><br>";
+        echo "<a href=\"index.php?logout=true\">Logout</a>";
+	if($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_ADMIN || $authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_MODERATOR)
+	{
+		echo " | <a href=\"index.php?p=admin\">Admin</a>";
+	}
+	echo "<br><br>";
     }
 }
 //Check page permissions and compare it to authenticated user permissions
 if(
     ($PAGES[$pageSelected]['perm']=='all')
     || ($PAGES[$pageSelected]['perm']=='auth' && $isAuthenticated)
-    || ($PAGES[$pageSelected]['perm']=='admin' && ($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_ADMIN))
+    || ($PAGES[$pageSelected]['perm']=='admin' && ($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_ADMIN && $isAuthenticated))
+    || ($PAGES[$pageSelected]['perm']=='mod' && ($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_MODERATOR && $isAuthenticated || ($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_ADMIN && $isAuthenticated)))
 )
 {
     //Load page selected if permission verified
