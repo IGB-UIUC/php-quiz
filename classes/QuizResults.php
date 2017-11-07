@@ -38,7 +38,7 @@ class QuizResults {
      */
     public function CreateQuizResults($userId,$quizId)
     {
-        $queryInsertQuizResults = "INSERT INTO quiz_results (quiz_id,user_id,status,correct_points, total_points,create_date)VALUES(:quiz_id,:user_id,:status,:correct_points,:total_points,NOW())";
+        $queryInsertQuizResults = "INSERT INTO quiz_results (quiz_id,user_id,status,correct_points, total_points)VALUES(:quiz_id,:user_id,:status,:correct_points,:total_points)";
         $insertQuizResults = $this->sqlDataBase->prepare($queryInsertQuizResults);
         $insertQuizResults->execute(array(':quiz_id'=>$quizId,':user_id'=>$userId,':status'=>QuizResults::IN_PROGRESS,':correct_points'=>0,':total_points'=>0));
         $quizResultsId = $this->sqlDataBase->LastInsertId();
@@ -71,7 +71,7 @@ class QuizResults {
             $this->quizId = $selectQuizResultsArr['quiz_id'];
             $this->userId = $selectQuizResultsArr['user_id'];
             $this->status = $selectQuizResultsArr['status'];
-            $this->completeDate = $selectQuizResultsArr['create_date'];
+            $this->completeDate = $selectQuizResultsArr['complete_date'];
             $this->correctPoints = $selectQuizResultsArr['correct_points'];
             $this->totalPoints = $selectQuizResultsArr['total_points'];
             $this->createDate = $selectQuizResultsArr['create_date'];
@@ -83,9 +83,18 @@ class QuizResults {
      */
     public function UpdateQuizResults()
     {
-        $queryUpdateQuizResults = "UPDATE quiz_results SET quiz_id=:quiz_id, user_id=:user_id,status=:status,correct_points=:correct_points,total_points=:total_points,complete_date=:complete_date  WHERE quiz_results_id=:quiz_results_id";
-        $updateQuizResults = $this->sqlDataBase->prepare($queryUpdateQuizResults);
-        $updateQuizResults->execute(array(':quiz_id'=>$this->quizId,':user_id'=>$this->userId,':status'=>$this->status,':correct_points'=>$this->correctPoints,':total_points'=>$this->totalPoints,':quiz_results_id'=>$this->quizResultsId,':complete_date'=>$this->completeDate));
+        $sql = "UPDATE quiz_results SET quiz_id=:quiz_id, user_id=:user_id,status=:status,";
+	$sql .= "correct_points=:correct_points,total_points=:total_points,complete_date=:complete_date ";
+	$sql .= "WHERE quiz_results_id=:quiz_results_id";
+        $result = $this->sqlDataBase->prepare($sql);
+        $result->execute(array(':quiz_id'=>$this->quizId,
+		':user_id'=>$this->userId,
+		':status'=>$this->status,
+		':correct_points'=>$this->correctPoints,
+		':total_points'=>$this->totalPoints,
+		':quiz_results_id'=>$this->quizResultsId,
+		':complete_date'=>$this->completeDate
+		));
     }
 
     /**Grade this quiz
@@ -113,7 +122,7 @@ class QuizResults {
 
         $queryUpdateCompleteDate = "UPDATE quiz_results SET complete_date=NOW(), total_points=:total_points, correct_points=:correct_points,status=:status WHERE quiz_results_id=:quiz_results_id";
         $updateCompleteDate = $this->sqlDataBase->prepare($queryUpdateCompleteDate);
-        $updateCompleteDate->execute(array(':quiz_results_id'=>$this->quizResultsId,':total_points'=>$this->totalPoints,':correct_points'=>$this->correctPoints,':status'=>$this->status));
+	$updateCompleteDate->execute(array(':quiz_results_id'=>$this->quizResultsId,':total_points'=>$this->totalPoints,':correct_points'=>$this->correctPoints,':status'=>$this->status));
     }
 
     /**Check if the quiz was passed by the user
@@ -190,12 +199,11 @@ class QuizResults {
      */
     public function QuestionResultsList()
     {
-        $queryQuizResults = "SELECT q.question_id, qr.user_id, qr.quiz_results_id, q.quiz_id, qr.answer_id, qr.is_correct, qr.question_points, q.order_num, qr.question_results_id
-                            FROM
-                            (SELECT * FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER by order_num) as q
-                            LEFT JOIN
-                            (SELECT * FROM question_results WHERE quiz_results_id=:quiz_results_id) as qr ON qr.question_id = q.question_id";
-        $quizResults = $this->sqlDataBase->prepare($queryQuizResults);
+        $sql = "SELECT q.question_id, qr.user_id, qr.quiz_results_id, q.quiz_id, qr.answer_id, qr.is_correct, qr.question_points, q.order_num, qr.question_results_id ";
+	$sql .= "FROM (SELECT * FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER by order_num) as q ";
+	$sql .= "LEFT JOIN (SELECT * FROM question_results WHERE quiz_results_id=:quiz_results_id) as qr ON qr.question_id = q.question_id ";
+	$sql .= "ORDER BY order_num ASC";
+        $quizResults = $this->sqlDataBase->prepare($sql);
         $quizResults->execute(array(':quiz_results_id'=>$this->quizResultsId,':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
         $quizResultsArr = $quizResults->fetchAll(PDO::FETCH_ASSOC);
 
@@ -384,7 +392,7 @@ class QuizResults {
      */
     public function setCompleteDate($completeDate)
     {
-        $this->completeDate = $this->createDate = date('Y-m-d H:i:s',strtotime($completeDate));
+        $this->completeDate = date('Y-m-d H:i:s',strtotime($completeDate));
     }
 
     /**

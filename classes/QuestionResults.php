@@ -40,7 +40,7 @@ class QuestionResults {
      */
     public function CreateResults($quizResultsId,$userId,$answerId,$questionId)
     {
-        $queryInsertResults = "INSERT INTO question_results (quiz_results_id,user_id,answer_id,is_correct,question_id,create_date,question_points)VALUES(:quiz_results_id,:user_id,:answer_id,:is_correct,:question_id,NOW(),:question_points)";
+        $queryInsertResults = "INSERT INTO question_results (quiz_results_id,user_id,answer_id,is_correct,question_id,question_points)VALUES(:quiz_results_id,:user_id,:answer_id,:is_correct,:question_id,:question_points)";
         $insertResults = $this->sqlDataBase->prepare($queryInsertResults);
         $insertResults->execute(array(':quiz_results_id'=>$quizResultsId,':user_id'=>$userId,':answer_id'=>$answerId,':is_correct'=>$this->isCorrect,':question_id'=>$questionId,':question_points'=>$this->questionPoints));
         $questionResultsId = $this->sqlDataBase->lastInsertId();

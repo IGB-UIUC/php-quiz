@@ -44,7 +44,6 @@ if($isAuthenticated)
     {
         $authenticate->Logout();
 	$isAuthenticated = false;
-	echo "logged out";
     }
     else
     {

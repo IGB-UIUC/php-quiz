@@ -54,11 +54,11 @@ if(isset($_POST['submit_question']))
 if(isset($_POST['submit_quiz']))
 {
    $quizResults->GradeQuiz();
-   if($quizResults->getStatus() == QuizResults::FAILED)
-   {
-        echo "<div class=\"alert alert-danger\" role=\"alert\"><b>Failed:</b> Quiz was reset, please try again.</div>";
-       $quizResults->CreateQuizResults($quizResults->getUserId(),$quizResults->getQuizId());
-   }
+   //if($quizResults->getStatus() == QuizResults::FAILED)
+   //{
+       //echo "<div class=\"alert alert-danger\" role=\"alert\"><b>Failed:</b>Please restart the quiz by clicking <a href='index.php?p=exam&quiz_id=" . $_GET['quiz_id'] . ">here</a></div>";
+       //$quizResults->CreateQuizResults($quizResults->getUserId(),$quizResults->getQuizId());
+   //}
 }
 
 //Allow the user to print a certification if they passed
@@ -144,38 +144,43 @@ if($questionsLeft == 0 && $quizResults->getStatus()==QuizResults::IN_PROGRESS)
 {
     echo "<br><br><b>All questions answered: </b>Please click here when you are ready to <input type=\"submit\" value=\" Grade Quiz \" name=\"submit_quiz\" class=\"btn btn-warning\">";
 }
+elseif ($quizResults->getStatus()==QuizResults::FAILED) {
+	echo "<p><div class=\"alert alert-danger\" role=\"alert\"><b>Failed:</b>Please restart the quiz by clicking <a href='index.php?p=exam&quiz_id=" . $_GET['quiz_id'] . "'>here</a></div></p>";	
 
-//Show question number
-echo "<hr><br><b>Question ".$question->getQuestionOrder().":</b><br>";
-if(file_exists(UPLOAD_DIR.$question->getQuestionId().".jpg"))
-{
-    echo "<img src=\"".UPLOAD_DIR.$question->getQuestionId().".jpg\"><br>";
 }
+elseif ($quizResults->getStatus()==QuizResults::PASSED) {
 
-//Show Question
-echo "<p class=\"bg-info\"><b>".$question->getQuestionText()."</b></p>";
-
-//List available answers
-echo "<table class=\"table\">";
-
-foreach($answersList as $id=>$answerInfo)
-{
-    echo "<tr><td  style=\"vertical-align: middle\"><input type=\"radio\" name=\"answer_selected\" value=\"".$answerInfo['answer_id']."\"";
-    if($answerInfo['answer_id']==$questionResults->getAnswerId())
-    {
-        echo  " checked=\"checked\"";
-    }
-    echo ">  ".$answerInfo['answer_text']." </td></tr>";
 }
-echo "</table>";
+elseif ($quizResults->getStatus()==QuizResults::IN_PROGRESS) {
 
-//Question submitted
-echo "<input type=\"hidden\" name=\"submitted_question_id\" value=\"".$question->getQuestionId()."\">";
-if($quizResults->getStatus() == QuizResults::IN_PROGRESS)
-{
-    echo "<input type=\"submit\" value=\" Select Answer \" name=\"submit_question\" class=\"btn btn-primary\">";
+	//Show question number
+	echo "<hr><br><b>Question ".$question->getQuestionOrder().":</b><br>";
+	if(file_exists(UPLOAD_DIR.$question->getQuestionId().".jpg"))
+	{
+	    echo "<img src=\"".UPLOAD_DIR.$question->getQuestionId().".jpg\"><br>";
+	}
+
+	//Show Question
+	echo "<p class=\"bg-info\"><b>".$question->getQuestionText()."</b></p>";
+
+	//List available answers
+	echo "<table class=\"table\">";
+
+	foreach($answersList as $id=>$answerInfo)
+	{
+		echo "<tr><td  style=\"vertical-align: middle\"><input type=\"radio\" name=\"answer_selected\" value=\"".$answerInfo['answer_id']."\"";
+		if($answerInfo['answer_id']==$questionResults->getAnswerId()) {
+			echo  " checked=\"checked\"";
+		}
+		echo ">  ".$answerInfo['answer_text']." </td></tr>";
+	}
+	echo "</table>";
+
+	//Question submitted
+	echo "<input type=\"hidden\" name=\"submitted_question_id\" value=\"".$question->getQuestionId()."\">";
+	echo "<input type=\"submit\" value=\" Select Answer \" name=\"submit_question\" class=\"btn btn-primary\">";
+
 }
-
 echo "</form>";
 
 echo "</div>";
