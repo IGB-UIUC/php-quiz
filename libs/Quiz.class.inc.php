@@ -17,12 +17,12 @@ class Quiz {
     private $quizStatus;
     private $quizPassScore;
 
-    private $sqlDataBase;
+    private $db;
 
 
-    public function __construct(PDO $sqlDataBase)
+    public function __construct(PDO $db)
     {
-        $this->sqlDataBase = $sqlDataBase;
+        $this->db = $db;
     }
 
     public function __destruct()
@@ -35,14 +35,14 @@ class Quiz {
      */
     public function LoadQuiz($quizId)
     {
-        $queryLoadQuiz = "SELECT * FROM quiz WHERE quiz_id=:quiz_id";
-        $loadQuiz = $this->sqlDataBase->prepare($queryLoadQuiz);
-        $loadQuiz->execute(array(":quiz_id"=>$quizId));
-        $loadQuizInfo = $loadQuiz->fetch(PDO::FETCH_ASSOC);
-        $this->quizName = $loadQuizInfo['quiz_text'];
-        $this->quizDescription = $loadQuizInfo['quiz_desc'];
-        $this->quizId = $loadQuizInfo['quiz_id'];
-        $this->quizPassScore = $loadQuizInfo['passing_score'];
+        $sql = "SELECT * FROM quiz WHERE quiz_id=:quiz_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(":quiz_id"=>$quizId));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        $this->quizName = $result['quiz_text'];
+        $this->quizDescription = $result['quiz_desc'];
+        $this->quizId = $result['quiz_id'];
+        $this->quizPassScore = $result['passing_score'];
 
     }
 
@@ -53,11 +53,12 @@ class Quiz {
     public function CreateQuiz($quizName, $quizDescription)
     {
         echo $quizName." ".$quizDescription;
-        $queryInsertQuiz = "INSERT INTO quiz (quiz_text, quiz_desc,status,passing_score) VALUES(:quiz_text, :quiz_desc,:status,:passing_score)";
+        $sql = "INSERT INTO quiz (quiz_text, quiz_desc,status,passing_score) ";
+	$sql .= "VALUES(:quiz_text, :quiz_desc,:status,:passing_score)";
         echo $quizName." ".$quizDescription." ".Quiz::ACTIVE." ".DEFAULT_PASS_SCORE;
-        $insertQuiz = $this->sqlDataBase->prepare($queryInsertQuiz);
-        $insertQuiz->execute(array(':quiz_text'=>$quizName, ':quiz_desc'=>$quizDescription,':status'=>Quiz::ACTIVE,':passing_score'=>DEFAULT_PASS_SCORE));
-        $this->quizId = $this->sqlDataBase->lastInsertId();
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_text'=>$quizName, ':quiz_desc'=>$quizDescription,':status'=>Quiz::ACTIVE,':passing_score'=>DEFAULT_PASS_SCORE));
+        $this->quizId = $this->db->lastInsertId();
         $this->quizName = $quizName;
         $this->quizDescription = $quizDescription;
     }
@@ -67,9 +68,11 @@ class Quiz {
      */
     public function UpdateQuiz()
     {
-        $queryUpdateQuiz = "UPDATE quiz SET quiz_text=:quiz_text, quiz_desc=:quiz_desc, status=:status, passing_score=:passing_score WHERE quiz_id=:quiz_id";
-        $updateQuiz = $this->sqlDataBase->prepare($queryUpdateQuiz);
-        $updateQuiz->execute(array(':quiz_text'=>$this->quizName,':quiz_desc'=>$this->quizDescription,':status'=>$this->quizStatus, ':quiz_id'=>$this->quizId,':passing_score'=>$this->quizPassScore));
+        $sql = "UPDATE quiz SET quiz_text=:quiz_text, quiz_desc=:quiz_desc, status=:status, passing_score=:passing_score ";
+	$sql .= "WHERE quiz_id=:quiz_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_text'=>$this->quizName,':quiz_desc'=>$this->quizDescription,
+		':status'=>$this->quizStatus, ':quiz_id'=>$this->quizId,':passing_score'=>$this->quizPassScore));
     }
 
     /**Load question give question order number
@@ -78,7 +81,7 @@ class Quiz {
      */
     public function LoadQuestion($questionNum)
     {
-        $question = new Question($this->sqlDataBase);
+        $question = new Question($this->db);
         $question->LoadQuestion($questionNum);
 
         return $question;
@@ -90,7 +93,7 @@ class Quiz {
      */
     public function LoadQuestionById($questionId)
     {
-        $question = new Question($this->sqlDataBase);
+        $question = new Question($this->db);
         $question->LoadQuestion($questionId);
 
         return $question;
@@ -102,12 +105,11 @@ class Quiz {
      */
     public function ListQuizzes($status = Quiz::ACTIVE)
     {
-        $queryQuizzes = "SELECT * FROM quiz WHERE status=:status";
-        $quizzes = $this->sqlDataBase->prepare($queryQuizzes);
-        $quizzes->execute(array(':status'=>$status));
-        $quizzesArr = $quizzes->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM quiz WHERE status=:status";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':status'=>$status));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
 
-        return $quizzesArr;
     }
 
     /**List all quizzes
@@ -115,12 +117,11 @@ class Quiz {
      */
     public function ListAllQuizzes()
     {
-        $queryQuizzes = "SELECT * FROM quiz";
-        $quizzes = $this->sqlDataBase->prepare($queryQuizzes);
-        $quizzes->execute();
-        $quizzesArr = $quizzes->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM quiz";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
 
-        return $quizzesArr;
     }
 
     /**get the first question of the quiz
@@ -128,12 +129,12 @@ class Quiz {
      */
     public function GetFirstQuestion()
     {
-        $firstQuestion = new Question($this->sqlDataBase);
-        $queryQuestions = "SELECT question_id FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER BY order_num ASC LIMIT 1";
-        $questions = $this->sqlDataBase->prepare($queryQuestions);
-        $questions->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
-        $questionsArr = $questions->fetch(PDO::FETCH_ASSOC);
-        $firstQuestion->LoadQuestion($questionsArr['question_id']);
+        $firstQuestion = new Question($this->db);
+        $sql = "SELECT question_id FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER BY order_num ASC LIMIT 1";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        $firstQuestion->LoadQuestion($result['question_id']);
 
         return $firstQuestion;
     }
@@ -144,12 +145,11 @@ class Quiz {
      */
     public function ListQuestions($status=Question::ACTIVE)
     {
-        $queryQuestions = "SELECT * FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER BY order_num ASC";
-        $questions = $this->sqlDataBase->prepare($queryQuestions);
-        $questions->execute(array(':quiz_id'=>$this->quizId,':status'=>$status));
-        $questionsArr = $questions->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER BY order_num ASC";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$this->quizId,':status'=>$status));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
 
-        return $questionsArr;
     }
 
     /**Get the number of questions in the quiz
@@ -157,12 +157,12 @@ class Quiz {
      */
     public function QuestionCount()
     {
-        $queryQuestions = "SELECT count(*) as num_questions FROM question WHERE quiz_id=:quiz_id AND status=:status";
-        $questions = $this->sqlDataBase->prepare($queryQuestions);
-        $questions->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
-        $questionsArr = $questions->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT count(*) as num_questions FROM question WHERE quiz_id=:quiz_id AND status=:status";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        return $questionsArr['num_questions'];
+        return $result['num_questions'];
     }
 
     //Getters and Setters

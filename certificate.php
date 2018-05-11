@@ -1,13 +1,7 @@
 <?php
 
 //Load initial configuration
-include ("includes/config.php");
-
-//Load php class auto loader
-include ("includes/auto_load_class.php");
-
-//Load PDO database object
-include ("includes/connect.inc.php");
+require_once ("includes/main.inc.php");
 
 //Start certificate if a key, and quiz result and a user is given
 if(isset($_POST['key']) && isset($_POST['quiz_results_id']) && isset($_POST['user_id']))

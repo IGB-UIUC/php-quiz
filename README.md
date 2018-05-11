@@ -1,3 +1,4 @@
+# PHP Quiz
 A simple PHP/MySQL/LDAP Quiz
 
 # INSTALL:

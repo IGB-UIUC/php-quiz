@@ -19,12 +19,12 @@ class User {
 
 
     private $userId;
-    private $sqlDataBase;
+    private $db;
     private $authKey;
 
-    public function __construct(PDO $sqlDataBase)
+    public function __construct(PDO $db)
     {
-        $this->sqlDataBase = $sqlDataBase;
+        $this->db = $db;
     }
 
     public function __destruct()
@@ -38,8 +38,8 @@ class User {
      */
     public function LoadUser($userId)
     {
-        $queryUser = "SELECT * FROM users WHERE user_id=:user_id";
-        $user = $this->sqlDataBase->prepare($queryUser);
+        $sql = "SELECT * FROM users WHERE user_id=:user_id LIMIT 1";
+        $user = $this->db->prepare($sql);
         $user->execute(array(':user_id'=>$userId));
         $userInfo = $user->fetch(PDO::FETCH_ASSOC);
         $this->userId = $userId;
@@ -53,10 +53,10 @@ class User {
      */
     public function CreateUser($userName)
     {
-        $queryInsertUser = "INSERT INTO users (user_name,user_role)VALUES(:user_name,:user_role)";
-        $insertUser = $this->sqlDataBase->prepare($queryInsertUser);
-        $insertUser->execute(array(':user_name'=>$userName,':user_role'=>User::ROLE_USER));
-        $userId = $this->sqlDataBase->lastInsertId();
+        $sql = "INSERT INTO users (user_name,user_role)VALUES(:user_name,:user_role)";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_name'=>$userName,':user_role'=>User::ROLE_USER));
+        $userId = $this->db->lastInsertId();
         if($userId)
         {
             $this->userId = $userId;
@@ -73,10 +73,10 @@ class User {
      */
     public function ListUsers($userRole)
     {
-        $queryUsersList = "SELECT * FROM users WHERE user_role=:user_role ORDER BY user_name";
-        $usersList = $this->sqlDataBase->prepare($queryUsersList);
-        $usersList->execute(array(':user_role'=>$userRole));
-        return $usersList->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM users WHERE user_role=:user_role ORDER BY user_name";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_role'=>$userRole));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -86,15 +86,15 @@ class User {
      */
     public function UpdateAuthKey()
     {
-        $queryUpdateSecureKey = "UPDATE users SET auth_key=MD5(RAND()) WHERE user_id = :user_id";
-        $updateSecureKey = $this->sqlDataBase->prepare($queryUpdateSecureKey);
-        $updateSecureKey->execute(array(":user_id"=>$this->userId));
+        $sql = "UPDATE users SET auth_key=MD5(RAND()) WHERE user_id = :user_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(":user_id"=>$this->userId));
 
-        $queryGetSecureKey = "SELECT auth_key FROM users WHERE user_id = :user_id";
-        $secureKey = $this->sqlDataBase->prepare($queryGetSecureKey);
-        $secureKey->execute(array(":user_id"=>$this->userId));
-        $secureKeyArr = $secureKey->fetch(PDO::FETCH_ASSOC);
-        $this->authKey = $secureKeyArr['auth_key'];
+        $sql = "SELECT auth_key FROM users WHERE user_id = :user_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(":user_id"=>$this->userId));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        $this->authKey = $result['auth_key'];
     }
 
     /**Checks if a user name already exists in the database
@@ -104,14 +104,13 @@ class User {
      */
     public function Exists($userName)
     {
-        $queryUserExists = "SELECT * FROM users WHERE user_name=:user_name";
-        $userExists = $this->sqlDataBase->prepare($queryUserExists);
-        $userExists->execute(array(':user_name'=>$userName));
-        $userExistsArr = $userExists->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM users WHERE user_name=:user_name LIMIT 1";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_name'=>$userName));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if(count($userExistsArr))
-        {
-            return $userExistsArr['user_id'];
+        if(count($result)) {
+            return $result['user_id'];
         }
 
         return false;
@@ -123,9 +122,9 @@ class User {
      */
     public function SetRole($roleId)
     {
-        $queryUpdateRole = "UPDATE users SET user_role=:user_role WHERE user_id=:user_id";
-        $updateRole = $this->sqlDataBase->prepare($queryUpdateRole);
-        $updateRole->execute(array(':user_role'=>$roleId,':user_id'=>$this->userId));
+        $sql = "UPDATE users SET user_role=:user_role WHERE user_id=:user_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_role'=>$roleId,':user_id'=>$this->userId));
     }
 
     /**

@@ -8,7 +8,7 @@
 
 class QuestionResults {
 
-    private $sqlDataBase;
+    private $db;
     private $quizResultsId;
     private $questionResultsId;
     private $userId;
@@ -18,9 +18,9 @@ class QuestionResults {
     private $createDate;
     private $questionPoints;
 
-    public function __construct(PDO $sqlDataBase)
+    public function __construct(PDO $db)
     {
-        $this->sqlDataBase = $sqlDataBase;
+        $this->db = $db;
         //Default values
         $this->questionResultsId = 0;
         $this->questionPoints = 0;
@@ -40,10 +40,13 @@ class QuestionResults {
      */
     public function CreateResults($quizResultsId,$userId,$answerId,$questionId)
     {
-        $queryInsertResults = "INSERT INTO question_results (quiz_results_id,user_id,answer_id,is_correct,question_id,question_points)VALUES(:quiz_results_id,:user_id,:answer_id,:is_correct,:question_id,:question_points)";
-        $insertResults = $this->sqlDataBase->prepare($queryInsertResults);
-        $insertResults->execute(array(':quiz_results_id'=>$quizResultsId,':user_id'=>$userId,':answer_id'=>$answerId,':is_correct'=>$this->isCorrect,':question_id'=>$questionId,':question_points'=>$this->questionPoints));
-        $questionResultsId = $this->sqlDataBase->lastInsertId();
+        $sql = "INSERT INTO question_results (quiz_results_id,user_id,answer_id,is_correct,question_id,question_points) ";
+	$sql .= "VALUES(:quiz_results_id,:user_id,:answer_id,:is_correct,:question_id,:question_points)";
+
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$quizResultsId,':user_id'=>$userId,':answer_id'=>$answerId,
+		':is_correct'=>$this->isCorrect,':question_id'=>$questionId,':question_points'=>$this->questionPoints));
+        $questionResultsId = $this->db->lastInsertId();
 
         if($questionResultsId)
         {
@@ -60,21 +63,21 @@ class QuestionResults {
      */
     public function LoadResults($questionResultsId)
     {
-        $queryLoadResults = "SELECT * FROM question_results WHERE question_results_id=:quiz_results_id";
-        $results = $this->sqlDataBase->prepare($queryLoadResults);
-        $results->execute(array('quiz_results_id'=>$questionResultsId));
-        $resultsArr = $results->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM question_results WHERE question_results_id=:quiz_results_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array('quiz_results_id'=>$questionResultsId));
+        $results = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($resultsArr)
+        if($results)
         {
-            $this->questionResultsId = $resultsArr['question_results_id'];
-            $this->quizResultsId = $resultsArr['quiz_results_id'];
-            $this->userId = $resultsArr['user_id'];
-            $this->answerId = $resultsArr['answer_id'];
-            $this->isCorrect = $resultsArr['is_correct'];
-            $this->questionId = $resultsArr['question_id'];
-            $this->createDate = $resultsArr['create_date'];
-            $this->questionPoints = $resultsArr['question_points'];
+            $this->questionResultsId = $results['question_results_id'];
+            $this->quizResultsId = $results['quiz_results_id'];
+            $this->userId = $results['user_id'];
+            $this->answerId = $results['answer_id'];
+            $this->isCorrect = $results['is_correct'];
+            $this->questionId = $results['question_id'];
+            $this->createDate = $results['create_date'];
+            $this->questionPoints = $results['question_points'];
         }
     }
 
@@ -83,9 +86,14 @@ class QuestionResults {
      */
     public function UpdateResults()
     {
-        $queryUpdateResults = "UPDATE question_results SET quiz_results_id=:quiz_results_id, user_id=:user_id, answer_id=:answer_id, is_correct=:is_correct, question_id=:question_id, question_points=:question_points WHERE question_results_id=:question_results_id";
-        $updateResults = $this->sqlDataBase->prepare($queryUpdateResults);
-        $updateResults->execute(array(':quiz_results_id'=>$this->quizResultsId,':user_id'=>$this->userId,':answer_id'=>$this->answerId,':is_correct'=>$this->isCorrect,':question_id'=>$this->questionId,':question_points'=>$this->questionPoints,':question_results_id'=>$this->questionResultsId));
+        $sql = "UPDATE question_results SET quiz_results_id=:quiz_results_id, user_id=:user_id, answer_id=:answer_id, ";
+	$sql .= "is_correct=:is_correct, question_id=:question_id, question_points=:question_points ";
+	$sql .= "WHERE question_results_id=:question_results_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$this->quizResultsId,':user_id'=>$this->userId,':answer_id'=>$this->answerId,
+		':is_correct'=>$this->isCorrect,':question_id'=>$this->questionId,':question_points'=>$this->questionPoints,
+		':question_results_id'=>$this->questionResultsId));
+
     }
 
     /**Delete results
@@ -94,9 +102,9 @@ class QuestionResults {
      */
     public function DeleteResults($userId,$quizResultsId)
     {
-        $queryDeleteResults = "DELETE * FROM results WHERE user_id=:user_id AND quiz_results_id=:quiz_results_id";
-        $deleteResults = $this->sqlDataBase->prepare($queryDeleteResults);
-        $deleteResults->execute(array(':user_id'=>$userId,':quiz_results_id'=>$quizResultsId));
+        $sql = "DELETE * FROM results WHERE user_id=:user_id AND quiz_results_id=:quiz_results_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_id'=>$userId,':quiz_results_id'=>$quizResultsId));
     }
 
     //Getters and Setters

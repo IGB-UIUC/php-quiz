@@ -1,15 +1,9 @@
 <?php
 ob_start();
 session_start();
-error_reporting(-1);
+//error_reporting(-1);
 //Load initial configuration
-include ("includes/config.php");
-
-//Load php class auto loader
-include ("includes/auto_load_class.php");
-
-//Load PDO database object
-include ("includes/connect.inc.php");
+require_once ("includes/main.inc.php");
 
 
 //Set the default page to load
@@ -36,7 +30,7 @@ else
 }
 
 //Load page header
-include ("includes/header.html");
+require_once ("includes/header.inc.php");
 
 if($isAuthenticated)
 {
@@ -64,14 +58,14 @@ if(
 )
 {
     //Load page selected if permission verified
-    include($PAGES[$pageSelected]['path']);
+    require_once($PAGES[$pageSelected]['path']);
 }
 else{
     //Ask user to login if permissions are not verified
-    include($PAGES["login"]['path']);
+    require_once($PAGES["login"]['path']);
 }
 
 //Load page footer
-include ("includes/footer.html");
+require_once ("includes/footer.inc.php");
 
 ?>

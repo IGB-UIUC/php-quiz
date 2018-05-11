@@ -20,11 +20,11 @@ class Question {
 
     private $questionPoints;
 
-    private $sqlDataBase;
+    private $db;
 
-    public function __construct(PDO $sqlDataBase)
+    public function __construct(PDO $db)
     {
-        $this->sqlDataBase = $sqlDataBase;
+        $this->db = $db;
     }
 
     public function __destruct()
@@ -38,7 +38,7 @@ class Question {
     public function LoadQuestion($questionId)
     {
         $queryQuestion = "SELECT * FROM question WHERE question_id=:question_id";
-        $question = $this->sqlDataBase->prepare($queryQuestion);
+        $question = $this->db->prepare($queryQuestion);
         $question->execute(array(':question_id'=>$questionId));
         $questionInfo = $question->fetch(PDO::FETCH_ASSOC);
         $this->questionId = $questionId;
@@ -59,10 +59,10 @@ class Question {
     public function CreateQuestion($quizId,$questionText,$questionImage,$questionPoints)
     {
         $orderNum = $this->GetLastQuestionNum($quizId)+1;
-        $queryInsertQuestion = "INSERT INTO question (question_text,quiz_id,image_name,status,order_num,points)VALUES(:question_text,:quiz_id,:image_name,:status,:order_num,:points)";
-        $insertQuestion = $this->sqlDataBase->prepare($queryInsertQuestion);
-        $insertQuestion->execute(array(':question_text'=>$questionText,':quiz_id'=>$quizId,':image_name'=>$questionImage,':status'=>Question::ACTIVE,':order_num'=>$orderNum,':points'=>$questionPoints));
-        $this->questionId = $this->sqlDataBase->lastInsertId();
+        $sql = "INSERT INTO question (question_text,quiz_id,image_name,status,order_num,points)VALUES(:question_text,:quiz_id,:image_name,:status,:order_num,:points)";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':question_text'=>$questionText,':quiz_id'=>$quizId,':image_name'=>$questionImage,':status'=>Question::ACTIVE,':order_num'=>$orderNum,':points'=>$questionPoints));
+        $this->questionId = $this->db->lastInsertId();
         $this->quizId = $quizId;
         $this->questionText = $questionText;
         $this->questionStatus = Question::ACTIVE;
@@ -76,9 +76,9 @@ class Question {
     public function DeleteQuestion()
     {
         //Just hide it
-        $queryDeleteQuestion = "UPDATE question SET status=:status WHERE question_id=:question_id";
-        $deleteQuestion = $this->sqlDataBase->prepare($queryDeleteQuestion);
-        $deleteQuestion->execute(array(':status'=>Question::DELETED,':question_id'=>$this->questionId));
+        $sql = "UPDATE question SET status=:status WHERE question_id=:question_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':status'=>Question::DELETED,':question_id'=>$this->questionId));
         $this->questionStatus = Question::DELETED;
     }
 
@@ -88,9 +88,11 @@ class Question {
      */
     public function UpdateQuestion()
     {
-        $queryUpdateQuestion = "UPDATE question SET question_text=:question_text, image_name=:image_name, status=:status, order_num=:order_num, points=:points WHERE question_id=:question_id";
-        $updateQuestion = $this->sqlDataBase->prepare($queryUpdateQuestion);
-        $updateQuestion->execute(array(':question_text'=>$this->questionText,':image_name'=> $this->questionImage,':status'=>$this->questionStatus,':order_num'=>$this->questionOrder,':points'=>$this->questionPoints,':question_id'=>$this->questionId));
+        $sql = "UPDATE question SET question_text=:question_text, image_name=:image_name, status=:status, order_num=:order_num, points=:points WHERE question_id=:question_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':question_text'=>$this->questionText,':image_name'=> $this->questionImage,
+		':status'=>$this->questionStatus,':order_num'=>$this->questionOrder,
+		':points'=>$this->questionPoints,':question_id'=>$this->questionId));
     }
 
     /**Get the next question in order
@@ -98,11 +100,11 @@ class Question {
      */
     public function GetNextQuestion()
     {
-        $queryNextQuestion = "SELECT question_id FROM question WHERE quiz_id=:quiz_id AND status=:status AND (order_num > :order_num) ORDER BY order_num ASC LIMIT 1";
-        $nextQuestion = $this->sqlDataBase->prepare($queryNextQuestion);
-        $nextQuestion->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE,'order_num'=>$this->questionOrder));
-        $nextQuestionArr = $nextQuestion->fetch(PDO::FETCH_ASSOC);
-        return $nextQuestionArr['question_id'];
+        $sql = "SELECT question_id FROM question WHERE quiz_id=:quiz_id AND status=:status AND (order_num > :order_num) ORDER BY order_num ASC LIMIT 1";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE,'order_num'=>$this->questionOrder));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result['question_id'];
 
     }
 
@@ -111,11 +113,11 @@ class Question {
      */
     public function GetPreviousQuestion()
     {
-        $queryPreviousQuestion = "SELECT question_id FROM question WHERE quiz_id=:quiz_id AND status=:status AND (order_num < :order_num) ORDER BY order_num DESC LIMIT 1";
-        $previousQuestion = $this->sqlDataBase->prepare($queryPreviousQuestion);
-        $previousQuestion->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE,'order_num'=>$this->questionOrder));
-        $previousQuestionArr = $previousQuestion->fetch(PDO::FETCH_ASSOC);
-        return $previousQuestionArr['question_id'];
+        $sql = "SELECT question_id FROM question WHERE quiz_id=:quiz_id AND status=:status AND (order_num < :order_num) ORDER BY order_num DESC LIMIT 1";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE,'order_num'=>$this->questionOrder));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result['question_id'];
     }
 
     /**Get a list of answers for this question
@@ -124,12 +126,11 @@ class Question {
     public function GetAnswers()
     {
 
-        $queryAnswers = "SELECT * FROM answer WHERE question_id=:question_id AND status=:status ORDER BY order_num ASC";
-        $answer = $this->sqlDataBase->prepare($queryAnswers);
-        $answer->execute(array(':question_id'=>$this->questionId,':status'=>Answer::ACTIVE));
-        $answerArr = $answer->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM answer WHERE question_id=:question_id AND status=:status ORDER BY order_num ASC";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':question_id'=>$this->questionId,':status'=>Answer::ACTIVE));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
 
-        return $answerArr;
     }
 
     /**Get the number of answers for this question
@@ -137,12 +138,12 @@ class Question {
      */
     public function GetAnswersCount()
     {
-        $queryAnswers = "SELECT COUNT(*) as answer_count FROM answer WHERE question_id=:question_id AND status=:status";
-        $answer = $this->sqlDataBase->prepare($queryAnswers);
-        $answer->execute(array(':question_id'=>$this->questionId,':status'=>Answer::ACTIVE));
-        $answerArr = $answer->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT COUNT(*) as answer_count FROM answer WHERE question_id=:question_id AND status=:status";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':question_id'=>$this->questionId,':status'=>Answer::ACTIVE));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        return $answerArr['answer_count'];
+        return $result['answer_count'];
     }
 
     /**Set the correct answers
@@ -150,7 +151,7 @@ class Question {
      */
     public function SetCorrectAnswers($correctAnswers)
     {
-        $answer = new Answer($this->sqlDataBase);
+        $answer = new Answer($this->db);
         $answersList = $this->GetAnswers();
 
         foreach($answersList as $id => $answerInfo)
@@ -176,12 +177,12 @@ class Question {
      */
     private function GetLastQuestionNum($quizId)
     {
-        $queryLastOrderNum = "SELECT order_num FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER BY order_num DESC LIMIT 1";
-        $lastOrderNum = $this->sqlDataBase->prepare($queryLastOrderNum);
-        $lastOrderNum->execute(array(':quiz_id'=>$quizId, ':status'=>Question::ACTIVE));
-        $lastOrderNumArr = $lastOrderNum->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT order_num FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER BY order_num DESC LIMIT 1";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$quizId, ':status'=>Question::ACTIVE));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        return $lastOrderNumArr['order_num'];
+        return $result['order_num'];
     }
 
     /**Updates the order of the question
@@ -195,16 +196,16 @@ class Question {
             if($newOrderNum > $this->questionOrder)
             {
                 //Shift question stack down
-                $queryShiftStack = "UPDATE question SET order_num=order_num-1 WHERE order_num <= :new_order_num AND order_num > :old_order_num AND quiz_id=:quiz_id";
+                $sql = "UPDATE question SET order_num=order_num-1 WHERE order_num <= :new_order_num AND order_num > :old_order_num AND quiz_id=:quiz_id";
             }
             elseif($newOrderNum < $this->questionOrder)
             {
                 //Shift question stack up
-                $queryShiftStack = "UPDATE question SET order_num=order_num+1 WHERE order_num >= :new_order_num AND order_num < :old_order_num AND quiz_id=:quiz_id";
+                $sql = "UPDATE question SET order_num=order_num+1 WHERE order_num >= :new_order_num AND order_num < :old_order_num AND quiz_id=:quiz_id";
             }
 
-            $shiftDownStack = $this->sqlDataBase->prepare($queryShiftStack);
-            $shiftDownStack->execute(array(':new_order_num'=>$newOrderNum, ':old_order_num'=>$this->questionOrder,':quiz_id'=>$this->quizId));
+            $query = $this->db->prepare($sql);
+            $query->execute(array(':new_order_num'=>$newOrderNum, ':old_order_num'=>$this->questionOrder,':quiz_id'=>$this->quizId));
             $this->questionOrder = $newOrderNum;
             $this->UpdateQuestion();
         }

@@ -1,2 +1,3 @@
-/includes/config.php
-/uploads
+/includes/config.inc.php
+/vendor
+

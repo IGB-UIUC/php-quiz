@@ -7,18 +7,18 @@
  */
 
 class Authenticate {
-    private $sqlDataBase;
+    private $db;
     private $ldapAuth;
     private $authenticatedUser;
     private $logonError;
     private $verified;
 
-    public function __construct(PDO $sqlDataBase, LdapAuth $ldapAuth)
+    public function __construct(PDO $db, LdapAuth $ldapAuth)
     {
-        $this->sqlDataBase = $sqlDataBase;
+        $this->db = $db;
         $this->ldapAuth = $ldapAuth;
         $this->verified = false;
-        $this->authenticatedUser = new User($this->sqlDataBase);
+        $this->authenticatedUser = new User($this->db);
         $this->logonError="";
     }
 
@@ -48,7 +48,7 @@ class Authenticate {
                 $this->verified = true;
                 return true;
             } else {
-                $this->authenticatedUser = new User($this->sqlDataBase);
+                $this->authenticatedUser = new User($this->db);
                 $this->authenticatedUser->CreateUser($userName);
                 $this->verified = true;
                 $this->authenticatedUser->UpdateAuthKey();
@@ -83,7 +83,7 @@ class Authenticate {
         {
             if(time() - $_SESSION['training_created'] < 1800)
             {
-                $this->authenticatedUser = new User ( $this->sqlDataBase );
+                $this->authenticatedUser = new User ( $this->db);
                 $this->authenticatedUser->LoadUser($_SESSION['training_user_id']);
 
                 if($this->authenticatedUser->getAuthKey() == $_SESSION['training_key'])

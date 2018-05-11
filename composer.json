@@ -1,0 +1,11 @@
+{
+	"require": {
+		"phpoffice/phpexcel": "1.8.1",
+		"components/jquery": "2.1.0",
+		"components/jqueryui": "1.10.4",
+		"twbs/bootstrap": "3.3.7",
+		"pear/mail_mime": "1.10.2",
+		"pear/mail": "1.4.1"
+	}
+}
+

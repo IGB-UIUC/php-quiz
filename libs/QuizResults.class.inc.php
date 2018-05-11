@@ -10,7 +10,7 @@ class QuizResults {
 
     const PASSED=1,IN_PROGRESS=0,FAILED=3;
 
-    private $sqlDataBase;
+    private $db;
     private $quizResultsId;
     private $quizId;
     private $userId;
@@ -20,9 +20,9 @@ class QuizResults {
     private $correctPoints;
     private $totalPoints;
 
-    public function __construct(PDO $sqlDataBase)
+    public function __construct(PDO $db)
     {
-        $this->sqlDataBase = $sqlDataBase;
+        $this->db = $db;
         $this->quizResultsId = 0;
 
     }
@@ -38,10 +38,10 @@ class QuizResults {
      */
     public function CreateQuizResults($userId,$quizId)
     {
-        $queryInsertQuizResults = "INSERT INTO quiz_results (quiz_id,user_id,status,correct_points, total_points)VALUES(:quiz_id,:user_id,:status,:correct_points,:total_points)";
-        $insertQuizResults = $this->sqlDataBase->prepare($queryInsertQuizResults);
-        $insertQuizResults->execute(array(':quiz_id'=>$quizId,':user_id'=>$userId,':status'=>QuizResults::IN_PROGRESS,':correct_points'=>0,':total_points'=>0));
-        $quizResultsId = $this->sqlDataBase->LastInsertId();
+        $sql = "INSERT INTO quiz_results (quiz_id,user_id,status,correct_points, total_points)VALUES(:quiz_id,:user_id,:status,:correct_points,:total_points)";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$quizId,':user_id'=>$userId,':status'=>QuizResults::IN_PROGRESS,':correct_points'=>0,':total_points'=>0));
+        $quizResultsId = $this->db->LastInsertId();
 
         if($quizResultsId)
         {
@@ -61,20 +61,20 @@ class QuizResults {
      */
     public function LoadQuizResults($quizResultsId)
     {
-        $querySelectQuizResults = "SELECT * FROM quiz_results WHERE quiz_results_id=:quiz_results_id";
-        $selectQuizResults = $this->sqlDataBase->prepare($querySelectQuizResults);
-        $selectQuizResults->execute(array(':quiz_results_id'=>$quizResultsId));
-        $selectQuizResultsArr = $selectQuizResults->fetch(PDO::FETCH_ASSOC);
-        if($selectQuizResultsArr)
+        $sql = "SELECT * FROM quiz_results WHERE quiz_results_id=:quiz_results_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$quizResultsId));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        if($result)
         {
-            $this->quizResultsId = $selectQuizResultsArr['quiz_results_id'];
-            $this->quizId = $selectQuizResultsArr['quiz_id'];
-            $this->userId = $selectQuizResultsArr['user_id'];
-            $this->status = $selectQuizResultsArr['status'];
-            $this->completeDate = $selectQuizResultsArr['complete_date'];
-            $this->correctPoints = $selectQuizResultsArr['correct_points'];
-            $this->totalPoints = $selectQuizResultsArr['total_points'];
-            $this->createDate = $selectQuizResultsArr['create_date'];
+            $this->quizResultsId = $result['quiz_results_id'];
+            $this->quizId = $result['quiz_id'];
+            $this->userId = $result['user_id'];
+            $this->status = $result['status'];
+            $this->completeDate = $result['complete_date'];
+            $this->correctPoints = $result['correct_points'];
+            $this->totalPoints = $result['total_points'];
+            $this->createDate = $result['create_date'];
         }
     }
 
@@ -86,8 +86,8 @@ class QuizResults {
         $sql = "UPDATE quiz_results SET quiz_id=:quiz_id, user_id=:user_id,status=:status,";
 	$sql .= "correct_points=:correct_points,total_points=:total_points,complete_date=:complete_date ";
 	$sql .= "WHERE quiz_results_id=:quiz_results_id";
-        $result = $this->sqlDataBase->prepare($sql);
-        $result->execute(array(':quiz_id'=>$this->quizId,
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$this->quizId,
 		':user_id'=>$this->userId,
 		':status'=>$this->status,
 		':correct_points'=>$this->correctPoints,
@@ -108,7 +108,7 @@ class QuizResults {
     {
         $this->CalculateQuizScore($updateScores);
 
-        $quiz = new Quiz($this->sqlDataBase);
+        $quiz = new Quiz($this->db);
         $quiz->LoadQuiz($this->quizId);
 
         if( ($this->correctPoints / $this->totalPoints) * 100 >= $quiz->getQuizPassScore())
@@ -120,9 +120,10 @@ class QuizResults {
             $this->status = QuizResults::FAILED;
         }
 
-        $queryUpdateCompleteDate = "UPDATE quiz_results SET complete_date=NOW(), total_points=:total_points, correct_points=:correct_points,status=:status WHERE quiz_results_id=:quiz_results_id";
-        $updateCompleteDate = $this->sqlDataBase->prepare($queryUpdateCompleteDate);
-	$updateCompleteDate->execute(array(':quiz_results_id'=>$this->quizResultsId,':total_points'=>$this->totalPoints,':correct_points'=>$this->correctPoints,':status'=>$this->status));
+        $sql = "UPDATE quiz_results SET complete_date=NOW(), total_points=:total_points, correct_points=:correct_points,status=:status ";
+	$sql .= "WHERE quiz_results_id=:quiz_results_id";
+        $query = $this->db->prepare($sql);
+	$query->execute(array(':quiz_results_id'=>$this->quizResultsId,':total_points'=>$this->totalPoints,':correct_points'=>$this->correctPoints,':status'=>$this->status));
     }
 
     /**Check if the quiz was passed by the user
@@ -132,12 +133,12 @@ class QuizResults {
      */
     public function isPassed($userId,$quizId)
     {
-        $queryQuizPassed = "SELECT status FROM quiz_Results WHERE user_id=:user_id AND quiz_id=:quiz_id AND status=:status";
-        $quizPassed = $this->sqlDataBase->prepare($queryQuizPassed);
-        $quizPassed->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::PASSED));
-        $quizPassedArr = $quizPassed->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT status FROM quiz_Results WHERE user_id=:user_id AND quiz_id=:quiz_id AND status=:status";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::PASSED));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($quizPassedArr)
+        if($result)
         {
             return true;
         }
@@ -152,14 +153,16 @@ class QuizResults {
      */
     public function QuizInProgress($userId,$quizId)
     {
-        $queryQuizInProgress = "SELECT quiz_results_id FROM quiz_results WHERE user_id=:user_id AND quiz_id=:quiz_id AND status!=:status ORDER BY status DESC";
-        $quizInProgress = $this->sqlDataBase->prepare($queryQuizInProgress);
-        $quizInProgress->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::FAILED));
-        $quizInProgressArr = $quizInProgress->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT quiz_results_id FROM quiz_results ";
+	$sql .= "WHERE user_id=:user_id AND quiz_id=:quiz_id AND status!=:status ";
+	$sql .= "ORDER BY status DESC";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::FAILED));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($quizInProgressArr)
+        if($result)
         {
-            return $quizInProgressArr['quiz_results_id'];
+            return $result['quiz_results_id'];
         }
 
         return 0;
@@ -172,12 +175,12 @@ class QuizResults {
      */
     public function QuizResultsList($userId,$quizId)
     {
-        $queryQuizResultsList = "SELECT quiz_results_id,status, correct_points, total_points FROM quiz_results WHERE user_id=:user_id AND quiz_id=:quiz_id";
-        $quizResultsList = $this->sqlDataBase->prepare($queryQuizResultsList);
-        $quizResultsList->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId));
-        $quizResultsListArr = $quizResultsList->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT quiz_results_id,status, correct_points, total_points ";
+	$sql .= "FROM quiz_results WHERE user_id=:user_id AND quiz_id=:quiz_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId));
+        return $query->fetch(PDO::FETCH_ASSOC);
 
-        return $quizResultsListArr;
     }
 
     /**List results for all users for a given quiz id
@@ -186,12 +189,13 @@ class QuizResults {
      */
     public function UsersQuizResultsList($quizId)
     {
-        $queryQuizResultsList = "SELECT qr.quiz_results_id,qr.status, qr.correct_points, qr.total_points, qr.complete_date, u.user_name, u.user_id FROM users u LEFT JOIN quiz_results qr ON u.user_id=qr.user_id WHERE qr.quiz_id=:quiz_id OR qr.quiz_id IS NULL ORDER BY u.user_name";
-        $quizResultsList = $this->sqlDataBase->prepare($queryQuizResultsList);
-        $quizResultsList->execute(array(':quiz_id'=>$quizId));
-        $quizResultsListArr = $quizResultsList->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT qr.quiz_results_id,qr.status, qr.correct_points, qr.total_points, qr.complete_date, u.user_name, u.user_id ";
+	$sql .= "FROM users u LEFT JOIN quiz_results qr ON u.user_id=qr.user_id ";
+	$sql .= "WHERE qr.quiz_id=:quiz_id OR qr.quiz_id IS NULL ORDER BY u.user_name";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_id'=>$quizId));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
 
-        return $quizResultsListArr;
     }
 
     /**List questions and their results for this quiz results
@@ -203,11 +207,10 @@ class QuizResults {
 	$sql .= "FROM (SELECT * FROM question WHERE quiz_id=:quiz_id AND status=:status ORDER by order_num) as q ";
 	$sql .= "LEFT JOIN (SELECT * FROM question_results WHERE quiz_results_id=:quiz_results_id) as qr ON qr.question_id = q.question_id ";
 	$sql .= "ORDER BY order_num ASC";
-        $quizResults = $this->sqlDataBase->prepare($sql);
-        $quizResults->execute(array(':quiz_results_id'=>$this->quizResultsId,':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
-        $quizResultsArr = $quizResults->fetchAll(PDO::FETCH_ASSOC);
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$this->quizResultsId,':quiz_id'=>$this->quizId,':status'=>Question::ACTIVE));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
 
-        return $quizResultsArr;
     }
 
     /**Set the question results for this quiz results
@@ -235,19 +238,20 @@ class QuizResults {
      */
     public function GetQuestionResults($questionId)
     {
-        $questionResults = new QuestionResults($this->sqlDataBase);
+        $questionResults = new QuestionResults($this->db);
 
-        $queryQuestionResultsId = "SELECT question_results_id FROM question_results WHERE quiz_results_id=:quiz_results_id AND question_id=:question_id";
-        $questionResultsId = $this->sqlDataBase->prepare($queryQuestionResultsId);
-        $questionResultsId->execute(array(':quiz_results_id'=>$this->quizResultsId,':question_id'=>$questionId));
-        $questionResultsIdArr = $questionResultsId->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT question_results_id FROM question_results ";
+	$sql .= "WHERE quiz_results_id=:quiz_results_id AND question_id=:question_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$this->quizResultsId,':question_id'=>$questionId));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($questionResultsIdArr)
+        if($result)
         {
-            $questionResults->LoadResults($questionResultsIdArr['question_results_id']);
+            $questionResults->LoadResults($result['question_results_id']);
         }
 
-        return $questionResults;
+        return $result;
     }
 
     /**Calculate the quiz socre
@@ -259,20 +263,22 @@ class QuizResults {
     {
         if($updateScores)
         {
-            //Update question results points to the latest ones
-            $querySetQuestionPoints = "UPDATE question_results qr, question q, answer a SET qr.question_points = q.points, qr.is_correct = a.correct_answer WHERE qr.question_id=q.question_id AND qr.quiz_results_id=:quiz_results_id AND a.answer_id=qr.answer_id";
-            $setQuestionPoints = $this->sqlDataBase->prepare($querySetQuestionPoints);
-            $setQuestionPoints->execute(array(':quiz_results_id'=>$this->quizResultsId));
+		//Update question results pointsi to the latest ones
+		$sql = "UPDATE question_results qr, question q, answer a SET qr.question_points = q.points, qr.is_correct = a.correct_answer ";
+		$sql .= "WHERE qr.question_id=q.question_id AND qr.quiz_results_id=:quiz_results_id AND a.answer_id=qr.answer_id";
+		$query = $this->db->prepare($sql);
+		$query->execute(array(':quiz_results_id'=>$this->quizResultsId));
         }
 
         //Calculate points from question results points
-        $queryQuizScore = "SELECT SUM(question_points) as total_points, SUM(CASE WHEN is_correct=1 THEN question_points ELSE 0 END) as correct_points FROM question_results WHERE user_id=:user_id AND quiz_results_id=:quiz_results_id";
-        $quizScore = $this->sqlDataBase->prepare($queryQuizScore);
+        $queryQuizScore = "SELECT SUM(question_points) as total_points, SUM(CASE WHEN is_correct=1 THEN question_points ELSE 0 END) as correct_points ";
+	$queryQuizScore .= "FROM question_results WHERE user_id=:user_id AND quiz_results_id=:quiz_results_id";
+        $quizScore = $this->db->prepare($queryQuizScore);
         $quizScore->execute(array(':user_id'=>$this->userId,':quiz_results_id'=>$this->quizResultsId));
-        $quizScoreArr = $quizScore->fetch(PDO::FETCH_ASSOC);
+        $result = $quizScore->fetch(PDO::FETCH_ASSOC);
 
-        $this->correctPoints = $quizScoreArr['correct_points'];
-        $this->totalPoints = $quizScoreArr['total_points'];
+        $this->correctPoints = $result['correct_points'];
+        $this->totalPoints = $result['total_points'];
     }
 
     /**
@@ -280,13 +286,13 @@ class QuizResults {
      */
     public function Delete()
     {
-        $queryDeleteQuestionResults = "DELETE FROM question_results WHERE quiz_results_id=:quiz_results_id";
-        $deleteQuestionResults = $this->sqlDataBase->preare($queryDeleteQuestionResults);
-        $deleteQuestionResults->execute(array(':quiz_results_id'=>$this->quizResultsId));
+        $sql = "DELETE FROM question_results WHERE quiz_results_id=:quiz_results_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$this->quizResultsId));
 
-        $queryDeleteQuizResults = "Delete FROM quiz_results WHERE quiz_results_id=:quiz_results_id";
-        $deleteQuizResults = $this->sqlDataBase->prepare($queryDeleteQuizResults);
-        $deleteQuizResults->execute(array(':quiz_results_id'=>$this->quizResultsId));
+        $sql = "Delete FROM quiz_results WHERE quiz_results_id=:quiz_results_id";
+        $query = $this->db->prepare($sql);
+        $query->execute(array(':quiz_results_id'=>$this->quizResultsId));
     }
     /**
      * @param mixed $correctPoints
