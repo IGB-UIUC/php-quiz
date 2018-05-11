@@ -65,7 +65,7 @@ class QuizResults {
         $query = $this->db->prepare($sql);
         $query->execute(array(':quiz_results_id'=>$quizResultsId));
         $result = $query->fetch(PDO::FETCH_ASSOC);
-        if($result)
+        if(count($result))
         {
             $this->quizResultsId = $result['quiz_results_id'];
             $this->quizId = $result['quiz_id'];
@@ -138,7 +138,7 @@ class QuizResults {
         $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::PASSED));
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($result)
+        if(count($result))
         {
             return true;
         }
@@ -160,7 +160,7 @@ class QuizResults {
         $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::FAILED));
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($result)
+        if(count($result))
         {
             return $result['quiz_results_id'];
         }
@@ -246,7 +246,7 @@ class QuizResults {
         $query->execute(array(':quiz_results_id'=>$this->quizResultsId,':question_id'=>$questionId));
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($result)
+        if(count($result))
         {
             $questionResults->LoadResults($result['question_results_id']);
         }

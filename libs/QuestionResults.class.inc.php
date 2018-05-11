@@ -68,7 +68,7 @@ class QuestionResults {
         $query->execute(array('quiz_results_id'=>$questionResultsId));
         $results = $query->fetch(PDO::FETCH_ASSOC);
 
-        if($results)
+        if(count($results))
         {
             $this->questionResultsId = $results['question_results_id'];
             $this->quizResultsId = $results['quiz_results_id'];
