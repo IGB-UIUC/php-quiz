@@ -38,7 +38,7 @@ class Answer {
         $sql = "SELECT * FROM answer WHERE answer_id=:answer_id";
         $query = $this->db->prepare($sql);
         $query->execute(array(':answer_id'=>$answerId));
-        $result = $answer->fetch(PDO::FETCH_ASSOC);
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
         $this->answerId = $answerId;
         $this->answerText= $result['answer_text'];

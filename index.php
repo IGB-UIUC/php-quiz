@@ -20,6 +20,7 @@ $ldapAuth = new LdapAuth(LDAP_HOST,LDAP_PEOPLE_DN,LDAP_GROUP_DN,LDAP_SSL,LDAP_PO
 $authenticate = new Authenticate($sqlDataBase,$ldapAuth);
 
 //Authenticate User
+$isauthenticated = false;
 if(isset($_POST['logon']))
 {
     $isAuthenticated = $authenticate->Login($_POST['username'],$_POST['password']);
@@ -38,15 +39,6 @@ if($isAuthenticated)
     {
         $authenticate->Logout();
 	$isAuthenticated = false;
-    }
-    else
-    {
-        echo "<a href=\"index.php?logout=true\">Logout</a>";
-	if($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_ADMIN || $authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_MODERATOR)
-	{
-		echo " | <a href=\"index.php?p=admin\">Admin</a>";
-	}
-	echo "<br><br>";
     }
 }
 //Check page permissions and compare it to authenticated user permissions

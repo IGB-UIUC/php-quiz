@@ -13,6 +13,7 @@ $userToEdit = new User($sqlDataBase);
 $quiz = new Quiz($sqlDataBase);
 $quizResults = new QuizResults($sqlDataBase);
 $selectedQuiz = 0;
+$quizResultsList = array();
 if(isset($_GET['quiz_id']))
 {
     $selectedQuiz = $_GET['quiz_id'];
@@ -46,7 +47,7 @@ echo "<div class=\"panel panel-info\">";
 echo "<div class=\"panel-heading\"><h3>Results</h3></div>";
 echo "<div class=\"panel-body\">";
 
-if($quizResultsList)
+if(count($quizResultsList))
 {
     echo "<table class=\"table\">";
     echo "<tr><th >User</th><th>Status</th><th>Grade</th><th>Date Completed</th></tr>";
