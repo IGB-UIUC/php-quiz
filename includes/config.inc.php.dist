@@ -18,6 +18,7 @@
 @define ('UPLOAD_DIR','uploads/');
 @define ('DEFAULT_QUESTION_POINTS',1);
 @define ('DEFAULT_PASS_SCORE',0);
+@define ('TITLE','Training Webiste');
 
 /**
  * PAGES explanation
