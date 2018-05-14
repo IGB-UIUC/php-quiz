@@ -30,8 +30,6 @@ else
     $isAuthenticated = $authenticate->VerifySession();
 }
 
-//Load page header
-require_once ("includes/header.inc.php");
 
 if($isAuthenticated)
 {
@@ -41,6 +39,10 @@ if($isAuthenticated)
 	$isAuthenticated = false;
     }
 }
+
+//Load page header
+require_once ("includes/header.inc.php");
+
 //Check page permissions and compare it to authenticated user permissions
 if(
     ($PAGES[$pageSelected]['perm']=='all')

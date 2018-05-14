@@ -116,9 +116,8 @@ class Authenticate {
      */
     public function UnsetSession()
     {
-        unset ( $_SESSION ['training_user_id'] );
-        unset ( $_SESSION ['training_key'] );
-        unset ( $_SESSION ['training_created'] );
+        unset ($_SESSION);
+	session_destroy();
     }
 
     /**
