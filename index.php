@@ -1,5 +1,5 @@
 <?php
-ob_start();
+//ob_start();
 session_start();
 //error_reporting(-1);
 //Load initial configuration

@@ -53,15 +53,14 @@ class User {
      */
     public function CreateUser($userName)
     {
-        $sql = "INSERT INTO users (user_name,user_role)VALUES(:user_name,:user_role)";
+	$key = $this->generate_key();
+        $sql = "INSERT INTO users (user_name,auth_key,user_role)VALUES(:user_name,:auth_key,:user_role)";
         $query = $this->db->prepare($sql);
-        $query->execute(array(':user_name'=>$userName,':user_role'=>User::ROLE_USER));
+        $query->execute(array(':user_name'=>$userName,':auth_key'=>$key,':user_role'=>User::ROLE_USER));
         $userId = $this->db->lastInsertId();
         if($userId)
         {
-            $this->userId = $userId;
-            $this->userName = $userName;
-            $this->UpdateAuthKey();
+		$this->LoadUser($userId);
         }
 
     }
@@ -86,17 +85,19 @@ class User {
      */
     public function UpdateAuthKey()
     {
-        $sql = "UPDATE users SET auth_key=MD5(RAND()) WHERE user_id = :user_id";
+     
+	$key = $this->generate_key();
+	$sql = "UPDATE users SET auth_key= :auth_key  WHERE user_id = :user_id LIMIT 1";
         $query = $this->db->prepare($sql);
-        $query->execute(array(":user_id"=>$this->userId));
-
-        $sql = "SELECT auth_key FROM users WHERE user_id = :user_id";
-        $query = $this->db->prepare($sql);
-        $query->execute(array(":user_id"=>$this->userId));
-        $result = $query->fetch(PDO::FETCH_ASSOC);
-        $this->authKey = $result['auth_key'];
+        $query->execute(array(":auth_key"=>$key,":user_id"=>$this->userId));
+        $this->authKey = $key;
     }
 
+    private function generate_key() {
+	$key = uniqid (rand (),true);
+	$hash = sha1($key);
+	return $hash;
+    }
     /**Checks if a user name already exists in the database
      * if it does then return the corresponding user id
      * @param $userName
