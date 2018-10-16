@@ -2,4 +2,5 @@
 /vendor
 /components
 /uploads
+composer.lock
 
