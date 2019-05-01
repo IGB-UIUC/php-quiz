@@ -30,12 +30,24 @@ if(isset($_GET['quiz_action']))
 <div class="panel-heading"><h3>Quizzes List:</h3></div>
 <div class="panel-body">
 <a href="index.php?p=admin"><< Back</a><br><br>
-<form action="index.php?p=quizzes" method="post">
-    <h3>Quiz Name:</h3>
-    <textarea name="quiz_name" rows="3" cols="50"></textarea><br><br>
-    <h3>Quiz Description:</h3>
-    <textarea name="quiz_desc" rows="5" cols="50"></textarea><br><br>
-    <input type="submit" value="Add Quiz" name="add_quiz" class="btn btn-primary"><br><br>
+<form action="index.php?p=quizzes" method="post" class='form-horizontal'>
+	<div class='form-group'>
+		<label for='quiz_name' class='col-md-2 control-label'>Quiz Name</label>
+		<div class='col-md-4'>
+			<input type='text' class='form-control' name="quiz_name"><br><br>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label for='quiz_desc' class='col-md-2 control-label'>Quiz Description</label>
+		<div class='col-md-4'>
+    		<textarea name="quiz_desc" rows="5" cols='74'></textarea><br><br>
+		</div>
+	</div>
+	<div class='form-group'>
+		<div class='col-md-6'>
+			<input type="submit" value="Add Quiz" name="add_quiz" class="btn btn-primary">
+		</div>
+	</div>
 </form>
                 <div class="panel panel-info">
                 <div class="panel-heading"><h3>Active Quizzes:</h3></div>

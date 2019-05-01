@@ -165,7 +165,6 @@ elseif ($quizResults->getStatus()==QuizResults::IN_PROGRESS) {
 
 	//List available answers
 	echo "<table class=\"table\">";
-
 	foreach($answersList as $id=>$answerInfo)
 	{
 		echo "<tr><td  style=\"vertical-align: middle\"><input type=\"radio\" name=\"answer_selected\" value=\"".$answerInfo['answer_id']."\"";

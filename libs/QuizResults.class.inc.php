@@ -133,10 +133,10 @@ class QuizResults {
      */
     public function isPassed($userId,$quizId)
     {
-        $sql = "SELECT status FROM quiz_Results WHERE user_id=:user_id AND quiz_id=:quiz_id AND status=:status";
+        $sql = "SELECT status FROM quiz_results WHERE user_id=:user_id AND quiz_id=:quiz_id AND status=:status";
         $query = $this->db->prepare($sql);
         $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::PASSED));
-        $result = $query->fetch(PDO::FETCH_ASSOC);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
         if(count($result))
         {
@@ -246,12 +246,12 @@ class QuizResults {
         $query->execute(array(':quiz_results_id'=>$this->quizResultsId,':question_id'=>$questionId));
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if(count($result))
+        if($result)
         {
             $questionResults->LoadResults($result['question_results_id']);
         }
 
-        return $result;
+        return $questionResults;
     }
 
     /**Calculate the quiz socre

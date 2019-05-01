@@ -72,15 +72,14 @@ echo "<div class=\"panel-body\">";
 echo "<a href=\"index.php?p=quizzes\"><< Back</a><br><br>";
 echo "<form method=\"post\" enctype=\"multipart/form-data\" action=\"index.php?p=edit_quiz&quiz_id=".$quiz->getQuizId()."\">";
 echo "<h3>Quiz Name:</h3>";
-echo "<textarea name=\"quiz_name\" rows=\"3\" cols=\"50\">".$quiz->getQuizName()."</textarea><br><br>";
+echo "<input type='text' name=\"quiz_name\" value='" . $quiz->getQuizName() . "'><br><br>";
 echo "<h3>Quiz Description:</h3>";
 echo "<textarea name=\"quiz_desc\" rows=\"5\" cols=\"50\">".$quiz->getQuizDescription()."</textarea><br>";
 echo "Passing Score: <input type=\"text\" name=\"pass_score\" size=2 value=\"".$quiz->getQuizPassScore()."\">%<br>";
-echo "<input type=\"submit\" value=\"Update Quiz\" name=\"update_quiz\" style=\"background-color:#dbeaf5;\"><br><br>";
+echo "<input type=\"submit\" value=\"Update Quiz\" name=\"update_quiz\" class='btn btn-primary'><br><br>";
 echo "<h3>Add Question:</h3>";
 echo "<textarea name=\"question_text\" rows=\"5\" cols=\"50\"></textarea><br>";
-echo "<input type=\"submit\" value=\"Add Question\" name=\"add_question\" style=\"background-color:#dbeaf5;\"><br><br>";
-//echo "<input type=\"submit\" value=\"Auto Order\" name=\"auto_order\" style=\"background-color:#dbeaf5;\">";
+echo "<input type=\"submit\" value=\"Add Question\" name=\"add_question\" class='btn btn-primary'><br><br>";
 echo "</form>";
 
 //List all questions for this quiz, list two tables one for active questions and one for deleted ones
@@ -100,11 +99,11 @@ foreach($questionStatusArr as $statusId => $statusDescription)
 
             if($statusId==Question::ACTIVE)
             {
-                echo " <a href=\"index.php?p=edit_quiz&action=del&quiz_id=".$quiz->getQuizId()."&question_id=".$questionInfo['question_id']."\">Delete</a></td>";
+                echo " | <a href=\"index.php?p=edit_quiz&action=del&quiz_id=".$quiz->getQuizId()."&question_id=".$questionInfo['question_id']."\">Delete</a></td>";
             }
             if($statusId==Question::DELETED)
             {
-                echo " <a href=\"index.php?p=edit_quiz&action=act&quiz_id=".$quiz->getQuizId()."&question_id=".$questionInfo['question_id']."\">Activate</a></td>";
+                echo " | <a href=\"index.php?p=edit_quiz&action=act&quiz_id=".$quiz->getQuizId()."&question_id=".$questionInfo['question_id']."\">Activate</a></td>";
             }
         echo "</tr>";
     }

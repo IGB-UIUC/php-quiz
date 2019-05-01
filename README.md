@@ -16,16 +16,16 @@ git clone https://github.com/IGB-UIUC/php-quiz.git
 ```
 * Create Mysql Database
 ```
-create database php-quiz CHARACTER SET utf8 COLLATE utf_general_ci;
+CREATE DATABASE phpquiz CHARACTER SET utf8 COLLATE utf8_general_ci;
 ```
 * Import sql/php-quiz.sql to create database structure
 ```
-mysql -u root -p php-quiz < sql/php-quiz.sql
+mysql -u root -p phpquiz < sql/php-quiz.sql
 ```
 * Create mysql user with insert,select,update,delete permissions on php-quiz database
 ```
-CREATE USER 'php-quiz'@'localhost' IDENTIFIED BY 'STRONG_PASSWORD';
-GRANT SELECT,INSERT,DELETE,UPDATE ON php-quiz.* to 'php-quiz'@'localhost';
+CREATE USER 'phpquiz'@'localhost' IDENTIFIED BY 'STRONG_PASSWORD';
+GRANT SELECT,INSERT,DELETE,UPDATE ON phpquiz.* to 'phpquiz'@'localhost';
 ```
 * Copy conf/config.inc.php.dist to conf/config.inc.php
 ```
@@ -37,7 +37,7 @@ cp conf/config.inc.php.dist conf/config.inc.php
 @define ('DB_USER','XXXXXXXXXXX');
 @define ('DB_PASSWORD','XXXXXXXXXXXX');
 @define ('DB_HOST','localhost');
-@define ('DB_NAME','php-quiz');
+@define ('DB_NAME','phpquiz');
 
 //LDAP Settings
 @define ('LDAP_HOST','XXX.XXX.XXX.XXX');

@@ -1,10 +1,10 @@
 <?php
 
 //MySQL settings
-@define ('DB_USER','training_user');
-@define ('DB_PASSWORD','SomePassword');
+@define ('DB_USER','phpquiz');
+@define ('DB_PASSWORD','');
 @define ('DB_HOST','localhost');
-@define ('DB_NAME','training');
+@define ('DB_NAME','phpquiz');
 
 //LDAP Settings
 @define ('LDAP_HOST','XXX.XXX.XXX.XXX');
@@ -18,7 +18,7 @@
 @define ('UPLOAD_DIR','uploads/');
 @define ('DEFAULT_QUESTION_POINTS',1);
 @define ('DEFAULT_PASS_SCORE',0);
-@define ('TITLE','Training Webiste');
-
+@define ('TITLE','Training Website');
+@define ('EMAIL','');
 
 ?>

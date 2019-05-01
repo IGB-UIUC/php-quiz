@@ -21,7 +21,8 @@
 <?php
 if($isAuthenticated)
 {
-	echo "<span class='pull-right'><a class='btn btn-primary btn-sm' role='button' href='index.php?logout=true'>Logout</a>";
+	echo "<span class='pull-right'>Version: " . __VERSION__ . "&nbsp";
+	echo "<a class='btn btn-primary btn-sm' role='button' href='index.php?logout=true'>Logout</a>";
 	if($authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_ADMIN || $authenticate->getAuthenticatedUser()->getUserRole()== User::ROLE_MODERATOR)
 	{
                 echo "&nbsp; <a class='btn btn-danger btn-sm' role='button' href=\"index.php?p=admin\">Admin</a>";
