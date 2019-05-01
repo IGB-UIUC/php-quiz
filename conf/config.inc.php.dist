@@ -1,0 +1,24 @@
+<?php
+
+//MySQL settings
+@define ('DB_USER','training_user');
+@define ('DB_PASSWORD','SomePassword');
+@define ('DB_HOST','localhost');
+@define ('DB_NAME','training');
+
+//LDAP Settings
+@define ('LDAP_HOST','XXX.XXX.XXX.XXX');
+@define ('LDAP_PEOPLE_DN', 'ou=people,dc=XXX,dc=XXX,dc=XXX');
+@define ('LDAP_GROUP_DN', 'ou=group,dc=XXX,dc=XXX,dc=XXX');
+@define ('LDAP_SSL','0');
+@define ('LDAP_PORT','389');
+
+@define ('DEFAULT_PAGE','exam_list');
+
+@define ('UPLOAD_DIR','uploads/');
+@define ('DEFAULT_QUESTION_POINTS',1);
+@define ('DEFAULT_PASS_SCORE',0);
+@define ('TITLE','Training Webiste');
+
+
+?>
