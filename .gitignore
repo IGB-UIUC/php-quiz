@@ -1,4 +1,4 @@
-/includes/config.inc.php
+/conf/config.inc.php
 /vendor
 /components
 /uploads

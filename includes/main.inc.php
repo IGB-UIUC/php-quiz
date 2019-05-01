@@ -1,6 +1,7 @@
 <?php
 
-require_once "includes/config.inc.php";
+require_once "conf/app.inc.php";
+require_once "conf/config.inc.php";
 require_once 'vendor/autoload.php';
 
 function class_autoload($class_name) {
