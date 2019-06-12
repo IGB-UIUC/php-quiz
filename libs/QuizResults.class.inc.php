@@ -160,7 +160,7 @@ class QuizResults {
         $query->execute(array(':user_id'=>$userId,':quiz_id'=>$quizId,':status'=>QuizResults::FAILED));
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
-        if(count($result))
+        if($result)
         {
             return $result['quiz_results_id'];
         }

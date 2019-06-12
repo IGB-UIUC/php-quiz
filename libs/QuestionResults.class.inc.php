@@ -63,7 +63,7 @@ class QuestionResults {
      */
     public function LoadResults($questionResultsId)
     {
-        $sql = "SELECT * FROM question_results WHERE question_results_id=:quiz_results_id";
+        $sql = "SELECT * FROM question_results WHERE question_results_id=:quiz_results_id LIMIT 1";
         $query = $this->db->prepare($sql);
         $query->execute(array('quiz_results_id'=>$questionResultsId));
         $results = $query->fetchAll(PDO::FETCH_ASSOC);

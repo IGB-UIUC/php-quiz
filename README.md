@@ -52,6 +52,7 @@ cp conf/config.inc.php.dist conf/config.inc.php
 @define ('DEFAULT_QUESTION_POINTS',1);
 @define ('DEFAULT_PASS_SCORE',0);
 @define ('TITLE','PHP Quiz Webiste');
+@define ('EMAIL','XXXXXXXXXXXX');
 ```
 * Add initial user to database
 ```

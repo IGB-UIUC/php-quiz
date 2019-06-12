@@ -27,7 +27,7 @@ foreach($_GET as $name => $value)
                 <div class="form-group">
 			<label>Netid:</label>
 			<div class='input-group'>
-				<input class="form-control" type="text" name="username" value="<?php if (isset($_POST['username'])) { echo $_POST['username']; } ?>">
+				<input class="form-control" type="text" name="username" value="<?php if (isset($_POST['username'])) { echo $_POST['username']; } ?>" autofocus>
 				<div class='input-group-addon'>
 					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
 				</div>
