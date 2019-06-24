@@ -66,9 +66,9 @@ class QuestionResults {
         $sql = "SELECT * FROM question_results WHERE question_results_id=:quiz_results_id LIMIT 1";
         $query = $this->db->prepare($sql);
         $query->execute(array('quiz_results_id'=>$questionResultsId));
-        $results = $query->fetchAll(PDO::FETCH_ASSOC);
+        $results = $query->fetch(PDO::FETCH_ASSOC);
 
-        if(count($results))
+        if($results)
         {
             $this->questionResultsId = $results['question_results_id'];
             $this->quizResultsId = $results['quiz_results_id'];

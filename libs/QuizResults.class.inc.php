@@ -61,12 +61,11 @@ class QuizResults {
      */
     public function LoadQuizResults($quizResultsId)
     {
-        $sql = "SELECT * FROM quiz_results WHERE quiz_results_id=:quiz_results_id";
+        $sql = "SELECT * FROM quiz_results WHERE quiz_results_id=:quiz_results_id LIMIT 1";
         $query = $this->db->prepare($sql);
         $query->execute(array(':quiz_results_id'=>$quizResultsId));
         $result = $query->fetch(PDO::FETCH_ASSOC);
-        if(count($result))
-        {
+	if ($result) {
             $this->quizResultsId = $result['quiz_results_id'];
             $this->quizId = $result['quiz_id'];
             $this->userId = $result['user_id'];
@@ -75,7 +74,7 @@ class QuizResults {
             $this->correctPoints = $result['correct_points'];
             $this->totalPoints = $result['total_points'];
             $this->createDate = $result['create_date'];
-        }
+	}
     }
 
     /**
@@ -189,9 +188,12 @@ class QuizResults {
      */
     public function UsersQuizResultsList($quizId)
     {
-        $sql = "SELECT qr.quiz_results_id,qr.status, qr.correct_points, qr.total_points, qr.complete_date, u.user_name, u.user_id ";
-	$sql .= "FROM users u LEFT JOIN quiz_results qr ON u.user_id=qr.user_id ";
-	$sql .= "WHERE qr.quiz_id=:quiz_id OR qr.quiz_id IS NULL ORDER BY u.user_name";
+	$sql = "SELECT quiz_results.quiz_results_id, quiz_results.status, quiz_results.correct_points, ";
+	$sql .= "quiz_results.total_points, quiz_results.complete_date, quiz_results.user_id, ";
+	$sql .= "users.user_name ";
+	$sql .= "FROM quiz_results LEFT JOIN users ON users.user_id=quiz_results.user_id ";
+	$sql .= "WHERE quiz_id=:quiz_id";
+
         $query = $this->db->prepare($sql);
         $query->execute(array(':quiz_id'=>$quizId));
         return $query->fetchAll(PDO::FETCH_ASSOC);

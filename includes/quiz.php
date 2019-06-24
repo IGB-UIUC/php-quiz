@@ -10,13 +10,15 @@ $question = new Question($sqlDataBase);
 $questionResults = new QuestionResults($sqlDataBase);
 
 $questionsLeft = 0;
+
+print_r($_GET);
 //Load Quiz
 if(isset($_GET['quiz_id']))
 {
     $quiz->LoadQuiz($_GET['quiz_id']);
     $quizResultsInProgressId = $quizResults->QuizInProgress($authenticate->getAuthenticatedUser()->getUserId(),$quiz->getQuizId());
-
     //If there already exists a quiz in progress resume it
+	echo "<br>quiz results id is " . $quizResultsInProgressId;
     if($quizResultsInProgressId)
     {
         $quizResults->LoadQuizResults($quizResultsInProgressId);

@@ -9,7 +9,7 @@
 
 class Quiz {
 
-    const ACTIVE=0, DELETED=1;
+    const ACTIVE=1, DELETED=0;
 
     private $quizId;
     private $quizName;
