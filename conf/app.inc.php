@@ -23,7 +23,7 @@ $PAGES = array(
     "results"=>array("perm"=>"admin","path"=>"includes/results.php"),
     "add_quiz"=>array("perm"=>"admin","path"=>"includes/add_quiz.php"),
     "edit_quiz"=>array("perm"=>"admin","path"=>"includes/edit_quiz.php"),
-    "add_question"=>array("admin"=>"auth","path"=>"includes/add_question.php"),
+    "add_question"=>array("perm"=>"admin","path"=>"includes/add_question.php"),
     "users_results"=>array("perm"=>"admin","path"=>"includes/users_results.php"),
     "edit_question"=>array("perm"=>"admin","path"=>"includes/edit_question.php"),
     "admin"=>array("perm"=>"admin","path"=>"includes/admin.php"),
