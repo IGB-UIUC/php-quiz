@@ -192,8 +192,8 @@ class QuizResults {
 	$sql .= "quiz_results.total_points, quiz_results.complete_date, quiz_results.user_id, ";
 	$sql .= "users.user_name ";
 	$sql .= "FROM quiz_results LEFT JOIN users ON users.user_id=quiz_results.user_id ";
-	$sql .= "WHERE quiz_id=:quiz_id";
-
+	$sql .= "WHERE quiz_id=:quiz_id ";
+	$sql .= "ORDER BY users.user_name ASC ";
         $query = $this->db->prepare($sql);
         $query->execute(array(':quiz_id'=>$quizId));
         return $query->fetchAll(PDO::FETCH_ASSOC);
