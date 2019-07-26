@@ -20,6 +20,9 @@ foreach($quizzesList as $id=>$quizInfo)
     $isPassed = $quizResults->isPassed($authenticate->getAuthenticatedUser()->getUserId(),$quizInfo['quiz_id']);
     $quizResultsList = $quizResults->QuizResultsList($authenticate->getAuthenticatedUser()->getUserId(),$quizInfo['quiz_id']);
     echo "<tr><td width=\"400\"><b>".$quizInfo['quiz_text']."</b></td>";
+    
+    echo "<td>" . wordwrap($quizInfo['quiz_desc'],80,"<br>") . "</td>";
+
     if($isPassed)
     {
         echo "<td width=\"100\">Passed</td></tr>";
