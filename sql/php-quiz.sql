@@ -3,6 +3,9 @@ CREATE TABLE `users` (
   `user_name` varchar(100) NOT NULL DEFAULT '',
   `auth_key` varchar(45) NOT NULL,
   `user_role` int(10) UNSIGNED DEFAULT NULL,
+  `first_name` VARCHAR(255),
+  `last_name` VARCHAR(255),
+  `email` VARCHAR(255),
   PRIMARY KEY(`user_id`)
 );
 
