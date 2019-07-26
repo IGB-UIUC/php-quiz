@@ -22,17 +22,21 @@ if(isset($_POST['key']) && isset($_POST['quiz_results_id']) && isset($_POST['use
         if($quizResults->getUserId() == $user->getUserId() && $user->getUserId()>0 && $quizResults->getUserId()>0)
         {
             //Print certificate to the screen with user information
-            echo "<div style=\"width:800px; height:600px; padding:20px; text-align:center; border: 10px solid #787878\">
+		echo "<div style=\"width:800px; height:600px; padding:20px; text-align:center; border: 10px solid #787878\">
                 <div style=\"width:750px; height:550px; padding:20px; text-align:center; border: 5px solid #787878\">
                     <span style=\"font-size:50px; font-weight:bold\">Certificate of Completion</span>
                     <br><br>
                     <span style=\"font-size:25px\"><i>This is to certify that</i></span>
                     <br><br>
-                    <span style=\"font-size:30px\"><b>".$user->getUserName()."</b></span><br/><br/>
-                    <span style=\"font-size:25px\"><i>has completed safety and compliance training for</i></span> <br/><br/>
-                    <span style=\"font-size:30px\">".$quiz->getQuizName()."</span><br/><br/>
+                    <span style=\"font-size:30px\"><b>".$user->getFirstName()." " . $user->getLastName() . "</b></span><br/><br/>";
+                
+		if ($quiz->getCertificateMsg()) {    
+
+			echo "<span style=\"font-size:25px\"><i>" . $quiz->getCertificateMsg() . "</i></span> <br/><br/>";
+		}
+		echo "<span style=\"font-size:30px\">".$quiz->getQuizName()."</span><br/><br/>
                     <span style=\"font-size:25px\"><i>Completion Date</i></span><br>
-                    <span style=\"font-size:30px\">".date('j.n.Y',strtotime($quizResults->getCompleteDate()))."</span>
+                    <span style=\"font-size:30px\">" . $quizResults->getFormatedCompleteDate() . "</span>
                 </div>
             </div>";
         }

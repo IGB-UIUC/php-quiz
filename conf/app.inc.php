@@ -3,7 +3,7 @@
 Stores application variables
 */
 
-@define("__VERSION__","1.2");
+@define("__VERSION__","1.21 Beta");
 
 /**
  * PAGES explanation

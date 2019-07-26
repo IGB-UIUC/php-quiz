@@ -16,7 +16,7 @@ if(isset($_GET['p']))
 }
 
 //Setup ldap authentication classes
-$ldapAuth = new LdapAuth(LDAP_HOST,LDAP_PEOPLE_DN,LDAP_GROUP_DN,LDAP_SSL,LDAP_PORT);
+$ldapAuth = new LdapAuth(LDAP_HOST,LDAP_PEOPLE_DN,LDAP_GROUP_DN,LDAP_BASE_DN,LDAP_SSL,LDAP_PORT);
 $authenticate = new Authenticate($sqlDataBase,$ldapAuth);
 
 //Authenticate User

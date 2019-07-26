@@ -16,7 +16,7 @@ class Quiz {
     private $quizDescription;
     private $quizStatus;
     private $quizPassScore;
-
+    private $certificate_msg;
     private $db;
 
 
@@ -43,7 +43,7 @@ class Quiz {
         $this->quizDescription = $result['quiz_desc'];
         $this->quizId = $result['quiz_id'];
         $this->quizPassScore = $result['passing_score'];
-
+	$this->certificate_msg = $result['quiz_certificate_msg'];
     }
 
     /**Create a new quiz in database and load it into this object
@@ -68,11 +68,16 @@ class Quiz {
      */
     public function UpdateQuiz()
     {
-        $sql = "UPDATE quiz SET quiz_text=:quiz_text, quiz_desc=:quiz_desc, status=:status, passing_score=:passing_score ";
+        $sql = "UPDATE quiz SET quiz_text=:quiz_text, quiz_desc=:quiz_desc, status=:status, passing_score=:passing_score, quiz_certificate_msg=:certificate_msg ";
 	$sql .= "WHERE quiz_id=:quiz_id";
         $query = $this->db->prepare($sql);
-        $query->execute(array(':quiz_text'=>$this->quizName,':quiz_desc'=>$this->quizDescription,
-		':status'=>$this->quizStatus, ':quiz_id'=>$this->quizId,':passing_score'=>$this->quizPassScore));
+        $query->execute(array(':quiz_text'=>$this->quizName,
+		':quiz_desc'=>$this->quizDescription,
+		':status'=>$this->quizStatus, 
+		':quiz_id'=>$this->quizId,
+		':passing_score'=>$this->quizPassScore,
+		':certificate_msg'=>$this->certificate_msg
+		));
     }
 
     /**Load question give question order number
@@ -246,6 +251,17 @@ class Quiz {
         return $this->quizPassScore;
     }
 
+	public function setCertificateMsg($certificate_msg) {
 
+		$this->certificate_msg = $this->certificate_msg;
+	}
+
+	public function getCertificateMsg() { 
+		if ($this->certificate_msg != "") {
+			return $this->certificate_msg;
+		}
+		return false;
+
+	}
 
 }

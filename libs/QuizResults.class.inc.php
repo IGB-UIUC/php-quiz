@@ -9,7 +9,7 @@
 class QuizResults {
 
     const PASSED=1,IN_PROGRESS=0,FAILED=3;
-
+    const date_format = "F j, Y";
     private $db;
     private $quizResultsId;
     private $quizId;
@@ -19,6 +19,7 @@ class QuizResults {
     private $createDate;
     private $correctPoints;
     private $totalPoints;
+    
 
     public function __construct(PDO $db)
     {
@@ -395,6 +396,10 @@ class QuizResults {
         return $this->completeDate;
     }
 
+    public function getFormatedCompleteDate() {
+	return date(QuizResults::date_format,strtotime($this->getCompleteDate()));
+
+    }
     /**
      * @param mixed $completeDate
      */

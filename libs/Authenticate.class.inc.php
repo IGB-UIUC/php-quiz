@@ -18,7 +18,7 @@ class Authenticate {
         $this->db = $db;
         $this->ldapAuth = $ldapAuth;
         $this->verified = false;
-        $this->authenticatedUser = new User($this->db);
+        $this->authenticatedUser = new User($this->db,$ldapAuth);
         $this->logonError="";
     }
 
@@ -44,12 +44,13 @@ class Authenticate {
             {
                 $this->authenticatedUser->LoadUser($userId);
                 $this->authenticatedUser->UpdateAuthKey();
+		$this->authenticatedUser->updateInfo($this->ldapAuth);
                 $this->SetSession($this->authenticatedUser->getAuthKey(), $this->authenticatedUser->GetUserId() );
                 $this->verified = true;
                 return true;
             } else {
                 $this->authenticatedUser = new User($this->db);
-                $this->authenticatedUser->CreateUser($userName);
+                $this->authenticatedUser->CreateUser($userName,$this->ldapAuth);
                 $this->verified = true;
                 $this->authenticatedUser->UpdateAuthKey();
                 $this->SetSession($this->authenticatedUser->getAuthKey(), $this->authenticatedUser->GetUserId() );
