@@ -34,7 +34,7 @@ foreach($_GET as $name => $value)
 			</div>
                  </div>
                 <div class="form-group">
-			<label>Password:</label>
+			<label>IGB Password:</label>
 			<div class='input-group'>
 				<input class="form-control" type="password" name="password">
 				<div class='input-group-addon'>
@@ -54,4 +54,12 @@ if($authenticate->getLogonError())
     echo "<b>".$authenticate->getLogonError()."</b> <br>Please try again please.";
     echo "</div>";
 }
+
+if (defined('PASSWORD_RESET_URL') && PASSWORD_RESET_URL !== "") {
+	echo "<div class='text-center'><a href='" . PASSWORD_RESET_URL . "'>Reset Password</a></div>";
+	echo "<hr>";
+
+}
+
+
 ?>
