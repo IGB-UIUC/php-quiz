@@ -65,8 +65,7 @@ INSERT INTO users(user_name,user_role) VALUES('USERNAME','1');
 ```
 composer install
 ```
-* Create /uploads folder with the apache user having read/write permssions on it
+* Set /uploads folder for the apache user to have read/write permssions on it
 ```
-mkdir uploads
 chown apache.apache uploads
 ```
