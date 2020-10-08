@@ -1,6 +1,6 @@
 /conf/config.inc.php
 /vendor
 /components
-/uploads
+/uploads/*
 composer.lock
 
