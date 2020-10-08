@@ -12,7 +12,7 @@ CREATE TABLE `users` (
 CREATE TABLE `quiz` (
   `quiz_id` INT NOT NULL AUTO_INCREMENT,
   `quiz_text` varchar(100) NOT NULL DEFAULT '',
-  `quiz_desc` TEXT  NOT NULL DEFAULT '',
+  `quiz_desc` TEXT NOT NULL,
   `passing_score` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   `quiz_certificate_msg` VARCHAR(255),
