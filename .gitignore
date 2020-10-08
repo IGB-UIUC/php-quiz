@@ -2,5 +2,6 @@
 /vendor
 /components
 /uploads/*
+!/uploads/.gitkeep
 composer.lock
 
