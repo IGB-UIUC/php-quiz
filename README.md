@@ -1,4 +1,7 @@
 # PHP Quiz
+
+[![Build Status](https://www.travis-ci.com/IGBIllinois/php-quiz.svg?branch=master)](https://www.travis-ci.com/IGBIllinois/php-quiz)
+
 * A simple PHP Quiz
 * Supports Multiple different quizes
 * MySQL backend with LDAP for authentication
