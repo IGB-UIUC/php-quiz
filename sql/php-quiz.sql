@@ -6,6 +6,7 @@ CREATE TABLE `users` (
   `first_name` VARCHAR(255),
   `last_name` VARCHAR(255),
   `email` VARCHAR(255),
+  `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY(`user_id`)
 );
 
